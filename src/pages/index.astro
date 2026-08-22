@@ -1,55 +1,441 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const tools = [
-  { key: 'utm', href: '/utm-builder/', eyebrow: 'Campaign QA', title: 'UTM Builder', copy: 'Build clean campaign links, catch attribution mistakes, and export a tidy handoff.', intent: 'marketers · analysts' },
-  { key: 'llm', href: '/llm-cost-calculator/', eyebrow: 'AI economics', title: 'LLM Cost Calculator', copy: 'Estimate token usage, compare model pricing, and pressure-test a workload before launch.', intent: 'AI builders · founders' },
-  { key: 'cron', href: '/cron-generator/', eyebrow: 'Scheduling', title: 'Cron Generator', copy: 'Turn a recurring schedule into a readable expression and verify the next three runs.', intent: 'developers · ops' },
-  { key: 'schema', href: '/schema-generator/', eyebrow: 'Search structure', title: 'Schema Generator', copy: 'Generate paste-ready JSON-LD for common Schema.org types without guessing the shape.', intent: 'SEOs · publishers' },
-  { key: 'favicon', href: '/favicon-generator/', eyebrow: 'Brand surface', title: 'Favicon Generator', copy: 'Create a small, sharp icon set and preview how it behaves across browser surfaces.', intent: 'designers · developers' },
-];
+const sampleJson = `{
+  "project": "json-lens",
+  "active": true,
+  "contributors": ["Mira", "Dev"],
+  "release": {
+    "version": 1,
+    "channels": ["stable", "preview"]
+  },
+  "limits": null
+}`;
+
+const sampleOutput = `{
+  "project": "json-lens",
+  "active": true,
+  "contributors": [
+    "Mira",
+    "Dev"
+  ],
+  "release": {
+    "version": 1,
+    "channels": [
+      "stable",
+      "preview"
+    ]
+  },
+  "limits": null
+}`;
 ---
-<BaseLayout title="Signal Tools — focused utilities for technical work" description="Private, browser-first utilities for campaign tracking, AI costs, cron schedules, structured data, and favicons.">
-  <main class="site-main site-shell">
-    <header class="page-intro">
+<BaseLayout title="JSON Lens — formatter, validator, and inspector" description="Format, validate, minify, and inspect JSON locally in your browser. Find syntax errors with a readable line and column location, then explore the document as a tree." currentPath="/" tool="json-lens">
+  <main class="site-main site-shell json-lens-page">
+    <section class="json-hero" aria-labelledby="page-title">
       <div>
-        <p class="eyebrow">Five focused tools</p>
-        <h1>Make the small decisions cleanly.</h1>
+        <p class="eyebrow">JSON LENS / FORMATTER + VALIDATOR</p>
+        <h1 id="page-title">Make JSON readable before it becomes a bug.</h1>
+        <p class="json-hero__lede">A private, browser-first JSON formatter that validates syntax, explains where parsing failed, and lets you inspect the shape of a document without sending it anywhere.</p>
+        <div class="json-hero__meta" aria-label="Product properties">
+          <span>no upload</span>
+          <span>standard JSON</span>
+          <span>runs locally</span>
+        </div>
       </div>
-      <div class="page-intro__aside">
-        <p class="page-intro__lede">Signal Tools is a practical workbench for the tiny technical jobs that slow down good work: tagging, pricing, scheduling, structure, and icons.</p>
-        <div class="button-row"><a class="button" href="#tools">Open the workbench <span aria-hidden="true">↓</span></a><a class="button secondary" href="/research/">Read the research <span aria-hidden="true">↗</span></a></div>
-      </div>
-    </header>
+      <aside class="hero-signal" aria-label="JSON Lens capabilities">
+        <p class="hero-signal__label">/workspace status</p>
+        <div class="hero-signal__readout">
+          <strong>LOCAL</strong>
+          <span>Input stays in this tab. Output is yours to copy or download.</span>
+        </div>
+        <div class="hero-signal__rule" aria-hidden="true"></div>
+      </aside>
+    </section>
 
-    <section id="tools" class="section" aria-labelledby="tools-title">
-      <div class="section-head">
-        <div><p class="eyebrow">The workbench</p><h2 id="tools-title">One useful action per page.</h2></div>
-        <p>Each tool is server-rendered for search and runs the actual calculation in your browser. No sign-up, no prompt upload, no opaque score.</p>
+    <section id="json-workspace" class="workspace-section" aria-labelledby="workspace-title">
+      <div class="workspace-heading">
+        <div>
+          <p class="eyebrow">01 / inspect a document</p>
+          <h2 id="workspace-title">The JSON workspace.</h2>
+        </div>
+        <p>Paste a payload, drop a <span class="mono">.json</span> file, or load the example. Every action is deterministic and visible.</p>
       </div>
-      <div class="directory-grid">
-        {tools.map((tool, index) => (
-          <a class="directory-card" data-tool={tool.key} href={tool.href}>
-            <div class="directory-card__top"><div><p class="eyebrow">{tool.eyebrow}</p><h2>{tool.title}</h2><p>{tool.copy}</p></div><span class="directory-card__index">0{index + 1}</span></div>
-            <div class="directory-card__footer"><span>{tool.intent}</span><span aria-hidden="true">↗</span></div>
-          </a>
-        ))}
+
+      <div class="workspace-bar">
+        <div class="workspace-bar__title">JSON LENS <span class="muted">/ editor</span></div>
+        <div class="workspace-bar__actions">
+          <button class="button quiet" id="load-sample" type="button">Load sample</button>
+          <button class="button quiet" id="clear-json" type="button">Clear</button>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <section class="editor-panel" aria-labelledby="input-title">
+          <header class="editor-panel__head">
+            <h3 id="input-title">Input</h3>
+            <p>paste or drop file</p>
+          </header>
+          <div class="editor-panel__body">
+            <label class="visually-hidden" for="json-input">JSON input</label>
+            <textarea id="json-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-status" set:text={sampleJson}></textarea>
+            <div class="editor-controls">
+              <div class="field-row">
+                <label for="indent-size">Indent</label>
+                <select id="indent-size">
+                  <option value="2" selected>2 spaces</option>
+                  <option value="4">4 spaces</option>
+                  <option value="tab">Tab</option>
+                </select>
+                <label class="check-label" for="sort-keys"><input id="sort-keys" type="checkbox" /> sort keys</label>
+              </div>
+            </div>
+            <div class="editor-actions" aria-label="JSON actions">
+              <button class="button" id="format-json" type="button">Format JSON</button>
+              <button class="button secondary" id="minify-json" type="button">Minify</button>
+            </div>
+            <p class="status" id="input-status" aria-live="polite">Ready to inspect.</p>
+          </div>
+        </section>
+
+        <section class="editor-panel" aria-labelledby="output-title">
+          <header class="editor-panel__head">
+            <h3 id="output-title">Output</h3>
+            <p id="output-status" class="status" aria-live="polite">Formatted sample</p>
+          </header>
+          <div class="editor-panel__body output-stack">
+            <pre id="json-output" class="code-output" aria-label="Formatted JSON output" set:text={sampleOutput}></pre>
+            <div class="output-actions">
+              <button class="button secondary" id="copy-json" type="button">Copy output</button>
+              <button class="button secondary" id="download-json" type="button">Download .json</button>
+            </div>
+            <dl class="stat-grid" aria-label="Document statistics">
+              <div class="stat"><dt>bytes</dt><dd id="stat-bytes">—</dd></div>
+              <div class="stat"><dt>keys</dt><dd id="stat-keys">—</dd></div>
+              <div class="stat"><dt>depth</dt><dd id="stat-depth">—</dd></div>
+              <div class="stat"><dt>lines</dt><dd id="stat-lines">—</dd></div>
+            </dl>
+            <div class="tree-inspector">
+              <div class="tree-inspector__head">
+                <label for="tree-search">Tree inspector</label>
+                <input id="tree-search" type="search" placeholder="filter keys or values" autocomplete="off" />
+              </div>
+              <div id="tree-output" class="tree-output" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="method-title">
-      <div class="section-head">
-        <div><p class="eyebrow">Method</p><h2 id="method-title">Useful before impressive.</h2></div>
-        <p>We prefer visible formulas, current-source notes, and reversible actions. When a number is an estimate, the interface says so.</p>
+    <section class="content-section" aria-labelledby="checks-title">
+      <div class="content-grid">
+        <div>
+          <p class="eyebrow">02 / what it checks</p>
+          <h2 id="checks-title">A small tool with a clear job.</h2>
+        </div>
+        <div class="content-section__copy">
+          <p>JSON Lens handles the recurring moments when a payload is almost right: a missing comma, a trailing comma, an unexpected quote, or an object that has become difficult to navigate by eye.</p>
+          <ul class="feature-list">
+            <li><strong>FORMAT</strong><span>Turn compact or uneven JSON into readable, copy-ready output with a chosen indent.</span></li>
+            <li><strong>EXPLAIN</strong><span>When parsing fails, get the browser’s error translated into a line and column you can jump to.</span></li>
+            <li><strong>INSPECT</strong><span>Search the resulting tree to find a key, a value, or the branch that needs attention.</span></li>
+          </ul>
+        </div>
       </div>
-      <div class="table-wrap"><table class="spec-table">
-        <thead><tr><th>Principle</th><th>What it means here</th><th>Default</th></tr></thead>
-        <tbody>
-          <tr><td>Privacy</td><td>Browser-first transformations for text, links, schedules, JSON, and icons.</td><td>Local</td></tr>
-          <tr><td>Clarity</td><td>Results show the inputs and method needed to recreate them.</td><td>Visible</td></tr>
-          <tr><td>Search</td><td>Explanatory copy and FAQs are part of every tool page.</td><td>Indexable</td></tr>
-        </tbody>
-      </table></div>
     </section>
+
+    <section class="content-section" aria-labelledby="faq-title">
+      <div class="content-grid">
+        <div>
+          <p class="eyebrow">03 / quick answers</p>
+          <h2 id="faq-title">Before you paste.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Does JSON Lens upload my data?</summary>
+            <p>No. Parsing, formatting, tree rendering, copying, and downloading happen in your browser. Avoid pasting secrets into any browser tool unless your own security policy allows it.</p>
+          </details>
+          <details>
+            <summary>Why does a comment make JSON invalid?</summary>
+            <p>Standard JSON has strings, numbers, booleans, null, arrays, and objects. Comments and trailing commas belong to other syntaxes, so they must be removed before strict JSON parsing.</p>
+          </details>
+          <details>
+            <summary>What does depth mean?</summary>
+            <p>Depth is the deepest nested array or object level in the parsed value. It is a structural hint, not a quality score.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <aside class="research-callout" aria-label="Product research">
+      <p><span class="eyebrow">Decision log</span><br />Why this focused tool was chosen from six candidate categories.</p>
+      <a href="/research/">Read the evidence ↗</a>
+    </aside>
   </main>
 </BaseLayout>
+
+<script>
+  import { formatJsonText, getJsonErrorLocation, getJsonStats, minifyJsonText } from '../lib/json';
+  import type { JsonValue } from '../lib/json';
+
+  const input = document.querySelector<HTMLTextAreaElement>('#json-input');
+  const output = document.querySelector<HTMLElement>('#json-output');
+  const inputStatus = document.querySelector<HTMLElement>('#input-status');
+  const outputStatus = document.querySelector<HTMLElement>('#output-status');
+  const indentSize = document.querySelector<HTMLSelectElement>('#indent-size');
+  const sortKeys = document.querySelector<HTMLInputElement>('#sort-keys');
+  const treeOutput = document.querySelector<HTMLElement>('#tree-output');
+  const treeSearch = document.querySelector<HTMLInputElement>('#tree-search');
+  const copyButton = document.querySelector<HTMLButtonElement>('#copy-json');
+  const downloadButton = document.querySelector<HTMLButtonElement>('#download-json');
+  const sampleButton = document.querySelector<HTMLButtonElement>('#load-sample');
+  const clearButton = document.querySelector<HTMLButtonElement>('#clear-json');
+  const formatButton = document.querySelector<HTMLButtonElement>('#format-json');
+  const minifyButton = document.querySelector<HTMLButtonElement>('#minify-json');
+
+  if (input && output && inputStatus && outputStatus && indentSize && sortKeys && treeOutput && treeSearch && copyButton && downloadButton && sampleButton && clearButton && formatButton && minifyButton) {
+    let currentOutput = output.textContent ?? '';
+
+    const stats = {
+      bytes: document.querySelector<HTMLElement>('#stat-bytes'),
+      keys: document.querySelector<HTMLElement>('#stat-keys'),
+      depth: document.querySelector<HTMLElement>('#stat-depth'),
+      lines: document.querySelector<HTMLElement>('#stat-lines'),
+    };
+
+    const setStatus = (element: HTMLElement, message: string, tone: 'error' | 'success' | 'info' = 'info') => {
+      element.textContent = message;
+      element.dataset.tone = tone;
+    };
+
+    const updateStats = (value: JsonValue, text: string) => {
+      const result = getJsonStats(value, text);
+      if (stats.bytes) stats.bytes.textContent = result.bytes.toLocaleString();
+      if (stats.keys) stats.keys.textContent = result.keys.toLocaleString();
+      if (stats.depth) stats.depth.textContent = result.depth.toLocaleString();
+      if (stats.lines) stats.lines.textContent = result.lines.toLocaleString();
+    };
+
+    const clearStats = () => {
+      Object.values(stats).forEach((element) => { if (element) element.textContent = '—'; });
+    };
+
+    const isContainer = (value: JsonValue) => Array.isArray(value) || (typeof value === 'object' && value !== null);
+
+    const renderTree = (value: JsonValue) => {
+      treeOutput.replaceChildren();
+      let nodeCount = 0;
+      const maxNodes = 1200;
+
+      const createNode = (node: JsonValue, label: string, depth: number): HTMLElement => {
+        nodeCount += 1;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'tree-node';
+        wrapper.dataset.search = `${label} ${JSON.stringify(node)}`.toLowerCase();
+
+        if (!isContainer(node)) {
+          const row = document.createElement('div');
+          row.className = 'tree-node__primitive';
+          const key = document.createElement('span');
+          key.className = 'tree-node__key';
+          key.textContent = label;
+          const valueElement = document.createElement('span');
+          const type = node === null ? 'null' : typeof node;
+          valueElement.className = 'tree-node__value';
+          valueElement.dataset.type = type;
+          valueElement.textContent = typeof node === 'string' ? JSON.stringify(node) : String(node);
+          row.append(key, valueElement);
+          wrapper.append(row);
+          return wrapper;
+        }
+
+        const details = document.createElement('details');
+        details.open = depth < 1;
+        const summary = document.createElement('summary');
+        const key = document.createElement('span');
+        key.className = 'tree-node__key';
+        key.textContent = label;
+        const entries: [string, JsonValue][] = Array.isArray(node)
+          ? node.map((item, index) => [String(index), item])
+          : Object.entries(node) as [string, JsonValue][];
+        const type = Array.isArray(node) ? 'array' : 'object';
+        const typeLabel = document.createElement('span');
+        typeLabel.className = 'tree-node__type';
+        typeLabel.textContent = `  ${type} · ${entries.length}`;
+        summary.append(key, typeLabel);
+        details.append(summary);
+
+        if (nodeCount >= maxNodes) {
+          const limit = document.createElement('p');
+          limit.className = 'tree-node__type';
+          limit.textContent = 'Tree preview capped at 1,200 nodes.';
+          details.append(limit);
+        } else {
+          entries.forEach(([childKey, child]) => {
+            if (nodeCount < maxNodes) details.append(createNode(child, childKey, depth + 1));
+          });
+        }
+
+        wrapper.append(details);
+        return wrapper;
+      };
+
+      treeOutput.append(createNode(value, '$', 0));
+      filterTree(treeSearch.value);
+    };
+
+    const filterTree = (query: string) => {
+      const normalized = query.trim().toLowerCase();
+      const nodes = Array.from(treeOutput.querySelectorAll<HTMLElement>('.tree-node'));
+      nodes.forEach((node) => {
+        const matches = !normalized || (node.dataset.search ?? '').includes(normalized);
+        node.hidden = !matches;
+        if (normalized && matches) node.querySelectorAll('details').forEach((detail) => { detail.open = true; });
+      });
+    };
+
+    const showInvalid = (error: unknown) => {
+      const location = getJsonErrorLocation(input.value, error);
+      input.setAttribute('aria-invalid', 'true');
+      setStatus(inputStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
+      setStatus(outputStatus, 'No valid document to inspect.', 'error');
+    };
+
+    const validate = () => {
+      if (!input.value.trim()) {
+        input.removeAttribute('aria-invalid');
+        setStatus(inputStatus, 'Empty document · add JSON to begin.', 'info');
+        return false;
+      }
+      try {
+        JSON.parse(input.value);
+        input.removeAttribute('aria-invalid');
+        setStatus(inputStatus, 'Valid JSON · ready to format.', 'success');
+        return true;
+      } catch (error) {
+        showInvalid(error);
+        return false;
+      }
+    };
+
+    const runFormat = () => {
+      try {
+        const indent = indentSize.value === 'tab' ? 'tab' : Number(indentSize.value);
+        const result = formatJsonText(input.value, indent, sortKeys.checked);
+        currentOutput = result.output;
+        output.textContent = result.output;
+        input.removeAttribute('aria-invalid');
+        downloadButton.disabled = false;
+        updateStats(result.value, result.output);
+        renderTree(result.value);
+        setStatus(inputStatus, 'Valid JSON · formatted locally.', 'success');
+        setStatus(outputStatus, 'Formatted output ready.', 'success');
+      } catch (error) {
+        showInvalid(error);
+      }
+    };
+
+    const runMinify = () => {
+      try {
+        const result = minifyJsonText(input.value, sortKeys.checked);
+        currentOutput = result.output;
+        output.textContent = result.output;
+        input.removeAttribute('aria-invalid');
+        downloadButton.disabled = false;
+        updateStats(result.value, result.output);
+        renderTree(result.value);
+        setStatus(inputStatus, 'Valid JSON · minified locally.', 'success');
+        setStatus(outputStatus, 'Minified output ready.', 'success');
+      } catch (error) {
+        showInvalid(error);
+      }
+    };
+
+    const loadSample = () => {
+      input.value = `{
+  "project": "json-lens",
+  "active": true,
+  "contributors": ["Mira", "Dev"],
+  "release": {
+    "version": 1,
+    "channels": ["stable", "preview"]
+  },
+  "limits": null
+}`;
+      runFormat();
+      input.focus();
+    };
+
+    const clearDocument = () => {
+      input.value = '';
+      output.textContent = '';
+      treeOutput.replaceChildren();
+      currentOutput = '';
+      downloadButton.disabled = true;
+      clearStats();
+      input.removeAttribute('aria-invalid');
+      setStatus(inputStatus, 'Empty document · add JSON to begin.', 'info');
+      setStatus(outputStatus, 'Waiting for a document.', 'info');
+      input.focus();
+    };
+
+    input.addEventListener('input', validate);
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Tab') {
+        event.preventDefault();
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        input.setRangeText('  ', start, end, 'end');
+      }
+    });
+    formatButton.addEventListener('click', runFormat);
+    minifyButton.addEventListener('click', runMinify);
+    sampleButton.addEventListener('click', loadSample);
+    clearButton.addEventListener('click', clearDocument);
+    treeSearch.addEventListener('input', () => filterTree(treeSearch.value));
+
+    copyButton.addEventListener('click', async () => {
+      if (!currentOutput) return;
+      try {
+        await navigator.clipboard.writeText(currentOutput);
+        const original = copyButton.textContent;
+        copyButton.textContent = 'Copied';
+        setTimeout(() => { copyButton.textContent = original; }, 1800);
+      } catch {
+        setStatus(outputStatus, 'Clipboard access was blocked by the browser.', 'error');
+      }
+    });
+
+    downloadButton.addEventListener('click', () => {
+      if (!currentOutput) return;
+      const blob = new Blob([currentOutput], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'formatted.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+
+    input.addEventListener('dragover', (event) => event.preventDefault());
+    input.addEventListener('drop', async (event) => {
+      event.preventDefault();
+      const file = event.dataTransfer?.files?.[0];
+      if (!file) return;
+      input.value = await file.text();
+      runFormat();
+    });
+
+    downloadButton.disabled = false;
+    try {
+      const result = formatJsonText(input.value, 2, false);
+      currentOutput = result.output;
+      output.textContent = result.output;
+      updateStats(result.value, result.output);
+      renderTree(result.value);
+      setStatus(inputStatus, 'Valid JSON · ready to format.', 'success');
+      setStatus(outputStatus, 'Formatted sample.', 'success');
+    } catch (error) {
+      showInvalid(error);
+    }
+  }
+</script>

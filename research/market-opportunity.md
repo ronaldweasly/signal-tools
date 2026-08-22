@@ -1,126 +1,110 @@
-# Market Opportunity Research
+# Focused Product Research: JSON Formatter + Validator
 
 Research date: 2026-08-22  
-Target market: English-language search, with US-first keyword evidence and global utility appeal.
+Market lens: English-language search, US-first where a country is stated, with a browser-first utility that can be used globally.
 
-## Executive conclusion
+## Decision
 
-No honest research process can guarantee that a keyword "will trend" or that a new site will rank within six months. Search volume is an estimate, Google Trends is normalized rather than absolute, and ranking depends on authority, product quality, links, indexing, and distribution.
+Build one product: **JSON Lens — a private JSON formatter, validator, and inspector**.
 
-The strongest balanced opportunity is a focused utility suite for developers, marketers, and technical SEOs. The first five builds are:
+This is not a claim that JSON formatter will rank or trend “for sure.” No public keyword source can guarantee a ranking position or six-month traffic. The decision is narrower and evidence-based: among the six candidate tool categories reviewed, JSON Formatter has the strongest combination of meaningful demand, moderate reported organic difficulty, clear action intent, and a credible product wedge.
 
-1. **UTM Builder + QA** — strongest balance of intent, CPC, observed demand, and buildability.
-2. **LLM Token & Cost Calculator** — strongest emerging-AI traffic upside; current competitors prove search-led demand.
-3. **Cron Expression Generator** — broad developer demand with a low-difficulty signal and a large incumbent proving the use case.
-4. **JSON-LD Schema Generator** — smaller head term, but high CPC, low stated competition, and strong SEO/AEO relevance.
-5. **Favicon Generator** — stable, visual, browser-based utility with meaningful developer/design demand and a clear differentiation path.
+QR Code Generator has more raw volume in the sources reviewed, but its saturation and incumbent strength make it a poor six-month bet for a new site. JSON Formatter is the highest-volume candidate that still passes the “not obviously dominated” filter.
 
-## How the evidence was weighted
+## Six-candidate comparison
 
-- **Demand:** keyword volume ranges and observed competitor visits, not one isolated number.
-- **Trend:** Google Trends directionality and current 2026 AI/SEO market signals.
-- **Competition:** keyword difficulty when available, incumbent traffic/backlinks, and number of well-established alternatives.
-- **Intent:** whether the searcher is trying to complete an action immediately.
-- **Buildability:** whether a fast, private, browser-first tool can deliver a meaningfully better experience without paid APIs.
-- **Six-month upside:** a relative forecast, not a promise. It assumes clean technical SEO, useful documentation, indexable pages, links/distribution, and continued iteration.
+Metrics from different providers are not interchangeable. KDROI reports a keyword volume estimate and its own KD score; SEOData exposes Google Ads-derived volume and paid competition; Toolseq is an unverified aggregator; Google Trends is indexed and normalized rather than absolute. The table keeps those differences visible instead of pretending they are one dataset.
 
-Google Trends is used directionally only: Google says its values are indexed and normalized from 1–100, low-volume terms can appear as 0, and one-off spikes should not be treated as proof of demand. Google Keyword Planner, Ahrefs, Semrush, and third-party sources use different databases, countries, time windows, and clustering rules, so their numbers are not interchangeable.
+| Candidate | Public demand signal | Competition / saturation signal | Trend or product signal | Decision |
+|---|---|---|---|---|
+| **JSON formatter / validator** | KDROI: **120,000 monthly searches**, KD **32/100**, CPC $2.40. Toolseq separately lists **JSON Formatter 2.7M** but does not document its geography or methodology. | KDROI labels the keyword low-competition; JSONLint is estimated at roughly **824K monthly visits**, proving task demand but also showing there are incumbents. The query has many long-tail variants: validator, beautifier, minify, tree view, JSON path. | Evergreen developer task; JSON remains a core interchange format. A browser-only inspector can differentiate on error location, tree navigation, large-input handling, and privacy. | **Winner** |
+| **Regex tester** | KDROI: **85,000 monthly searches**, KD **28/100**, CPC $1.95. Toolseq separately lists **Regex Tester 800K**, with undocumented geography. | Lower reported KD, but Regex101 and RegExr are strong, recognizable developer incumbents. Ahrefs itself points readers to a regex tester and names regex101 as the reference workflow. | Strong recurring developer intent and a clear opportunity for engine-specific explanations, but the category is already well served. | Runner-up |
+| **Image compressor** | SEOData: **60,500 US monthly searches** for “image compressor”; listed paid competition is 0.05, which is not organic KD. Toolseq lists “Compress Image” at 3.8M without methodology. | TinyPNG, Squoosh, iLoveIMG, Compressor.io, and many alternatives already own the mental category. A new product needs WASM/Web Worker depth to be meaningfully better. | Demand is durable and privacy is a good wedge, but the technical and brand moat is heavier than the keyword table suggests. | Hold |
+| **QR code generator** | KeywordIdeas: **673,000 monthly searches**; QRbug cites roughly **110,000** for “free QR code generator.” | Extremely saturated and commercially crowded. Existing products have strong brands, backlinks, subscription funnels, and dynamic-code features. High raw volume does not satisfy the low-competition requirement. | Demand is obvious, but a generic generator is not a realistic six-month SEO target. | Reject |
+| **Cron expression generator** | KDROI: **32,000 monthly searches**, KD **28/100**, CPC $1.85. | Crontab.guru is a clear incumbent with a large usage footprint, but the SERP intent is narrow and practical. | Good low-risk utility with timezone and dialect differentiation, but lower traffic ceiling than JSON or Regex. | Hold |
+| **LLM cost / token calculator** | No comparable public head-term volume was available from the accessible sources. Toolify and competitor pages show meaningful product traffic, but competitor visits are not keyword volume. | Fragmented and changing market; current competitors range from simple calculators to pricing catalogs and FinOps products. | Strongest topical momentum because model prices and AI workloads keep changing; high upside, but weaker verified demand evidence and faster data decay. | Hold / validate separately |
 
-## Ranked opportunity list
+## Why JSON wins
 
-| Overall | Tool opportunity | Demand signal | Competition signal | Six-month traffic upside | Rankability | Decision |
-|---:|---|---|---|---:|---:|---|
-| 1 | UTM Builder + QA | Semrush shows **12,100 US searches** for “utm builder”; related terms add 2,900 + 1,900 + 2,400. A separate opportunity report estimates 9,100 searches and 20,500 traffic potential. | Existing UTMBuilder.net receives about **82K monthly visits**, ranks around position 2, and has authority/backlinks but not an impregnable moat. | **8.7/10** | **8.4/10** | Build |
-| 2 | LLM Token & Cost Calculator | Toolify reports **37.3K monthly visitors** for an LLM token counter and “token counter” traffic around 37.3K in its keyword table. Probedex reports a nearby LLM pricing domain at **207.9K monthly visits**, 63% organic, with “openai api pricing” at 37.3K and “llm token counter” at 1.4K. | Competitive, but much of the market is young and fragmented. Current pages have weak UX and limited model/cost comparison depth. | **9.4/10** | **7.3/10** | Build |
-| 3 | Cron Expression Generator | KDROI reports **32,000 monthly searches**, KD **28/100**, CPC $1.85; DevPick’s tool map reports 5.4K for the narrower head term. A Stack Exchange analysis cites crontab.guru at about **605K monthly visits** and a strong Google Trends reading. | There is a clear incumbent, but search intent is utilitarian and many alternatives are outdated or bare. | **8.9/10** | **7.6/10** | Build |
-| 4 | JSON-LD Schema Generator | Google Ads-derived public data shows 3,600 for “schema markup”, 1,900 for “schema generator json”, 1,600 for “schema json generator”, and 1,000 for “schema generator”; CPC ranges roughly $4.74–$13.67. | Public data lists competition as 0 for the seed and several related terms; SERP competition exists, but the long-tail is fragmented by schema type. | **7.0/10** | **8.8/10** | Build |
-| 5 | Favicon Generator + Multi-size Preview | DevPick reports **12.1K** search-volume sizing for “favicon generator”; Stack Overflow and developer resource directories show persistent use and an established workflow need. | Existing products are often either overbuilt brand suites or a single basic converter. A transparent, private, multi-platform pack is differentiated. | **7.2/10** | **7.8/10** | Build |
-| 6 | Open Graph Preview + Meta Tag Generator | DevPick reports **4.4K** for “open graph preview” and **6K** for “meta tag generator”. Multiple free SEO suites list it as a popular utility. | Medium: many basic generators, but few polished preview-and-QA experiences. | **6.4/10** | **7.1/10** | Hold as phase two |
-| 7 | CSS Gradient Generator | DevPick reports **33K** search-volume sizing. The tool is highly shareable and visually demonstrable. | Competition is high and design-tool SERPs have strong incumbents. | **7.4/10** | **5.7/10** | Hold as phase two |
-| 8 | JSON to TypeScript Generator | DevPick reports **14.8K** search-volume sizing for the developer conversion query. | Competition is medium; differentiation depends on correctness, nested schema handling, and copy/export UX. | **6.8/10** | **6.8/10** | Hold as phase two |
-| 9 | Robots.txt + AI Crawler Policy Generator | Ahrefs’ 2026 SEO research reports “llms.txt” at **3,700 US searches/month, +154% YoY**, while robots.txt generator signals are around 1K in DevPick. Ahrefs also reports that llms.txt is not used by major AI search providers and is not needed for Google generative features. | Low-to-medium competition, but the proposed standard is weak and potentially misleading. | **5.7/10** | **8.0/10** | Do not build as a standalone promise; consider an evidence-led robots/crawler tool later |
-| 10 | QR Code Generator | DevPick reports **823K** search-volume sizing, so demand is enormous. | Saturation is extreme: generic QR generators are abundant, brand trust and distribution dominate, and the head SERP is not a reasonable six-month target for a new site. | **9.8/10** | **2.0/10** | Reject for this build |
+1. **It clears the demand threshold without relying on a single viral spike.** KDROI’s 120K estimate is materially above Regex Tester (85K), Image Compressor (60.5K US), and Cron (32K). The larger Toolseq estimate is treated as directional only because its geography and methodology are not documented.
+2. **The intent is immediate and unambiguous.** Someone searching “JSON formatter” is usually trying to paste, inspect, validate, beautify, or minify data now. That is a better fit for a free utility than a research-only topic.
+3. **The competition is beatable at the product layer even though it is not empty.** JSONLint proves that the job has demand; it does not prove that every user experience is solved. The wedge is a fast, private, explainable inspector rather than another textarea with a green checkmark.
+4. **The long-tail expands one product without becoming a multi-app catalog.** The same focused app can serve “JSON validator,” “JSON beautifier,” “JSON minifier,” “format JSON online,” “JSON error line,” and “JSON tree viewer.” These are features and search intents of one product, not six unrelated tools.
+5. **It is buildable without a paid API.** Parsing, formatting, validation, tree rendering, key sorting, copy, and downloads can all run in the browser. Privacy is a real product promise because sensitive payloads do not need to leave the device.
 
-## The five selected builds
+## Google Trends verification
 
-### 1. UTM Builder + QA
+Google Trends was checked as a required directionality source, but automated access to the comparison endpoint was rate-limited with HTTP 429 in this environment. I am not fabricating normalized 1–100 scores. The comparison link is preserved for manual verification:
 
-**Core search intent:** “utm builder”, “utm generator”, “utm maker”, “utm tracking”, “utm creator”.
+[Google Trends comparison: JSON formatter, Regex tester, Image compressor, Cron expression generator, QR code generator](https://trends.google.com/trends/explore?date=today%205-y&geo=US&q=JSON%20formatter,regex%20tester,image%20compressor,cron%20expression%20generator,QR%20code%20generator)
 
-**Product wedge:** a campaign builder that also validates an existing URL, normalizes casing and naming, warns about missing values, and maintains a private local campaign history. Include copyable links, CSV export, presets, and shareable query-state URLs.
+Google’s own documentation says Trends values are normalized, can show 0 for low-volume terms, and should be exported/cited from the Trends interface. It also says Google Trends is a different source from Google Ads. Therefore Trends is used here as a directionality check, not as a substitute for volume or a promise of future traffic.
 
-**Why it can win:** strong commercial CPC, high immediate task intent, and a clear quality gap between simple generators and a QA-oriented workflow.
+## Ahrefs verification
 
-### 2. LLM Token & Cost Calculator
+The Ahrefs Free Keyword Generator page was opened and the live query flow was attempted with “json formatter.” The page rendered, but its Cloudflare Turnstile challenge blocked the result request in this environment. No Ahrefs number is invented or presented as if it was directly retrieved.
 
-**Core search intent:** “token counter”, “llm token counter”, “AI API cost calculator”, “OpenAI API pricing”, “LLM pricing comparison”.
+What is verified from Ahrefs’ own documentation:
 
-**Product wedge:** privacy-first token estimation, provider/model comparison, input/output/cached-token pricing, request-volume scenarios, and a visible “verify current price” warning. Use an explicit approximation label for model families whose exact tokenizer is not bundled.
+- Keywords Explorer defines Volume as the average monthly searches in a selected country over the latest known 12 months.
+- Ahrefs’ KD is a 0–100 estimate based primarily on referring domains to the top-ranking organic pages; it is not the same as Google Ads’ paid-competition field.
+- Ahrefs says volume, CPC, SERPs, and difficulty are refreshed regularly, so a research snapshot must carry a date.
 
-**Why it can win:** strong AI demand, clear cost-saving intent, high current competitor traffic, and a market where pricing changes make static tables stale. The site should publish a machine-readable pricing update timestamp and never imply financial certainty.
+The third-party 120K / KD32 JSON estimate is treated as a directional cross-check, not an Ahrefs export. Before a paid launch decision, re-run the exact seed and its long-tail cluster in an authenticated Ahrefs Keywords Explorer project.
 
-### 3. Cron Expression Generator
+## Product scope: JSON Lens
 
-**Core search intent:** “cron expression generator”, “cron job generator”, “crontab generator”, “cron schedule builder”.
+The first release is one focused app with one job: **make JSON understandable and safe to ship**.
 
-**Product wedge:** plain-English presets, reverse parser, human-readable explanation, next-run preview, timezone awareness, and syntax validation for common 5-field cron plus optional 6/7-field formats. Be explicit about dialect differences rather than silently outputting a schedule that may fail on the user’s system.
+### Core workflow
 
-**Why it can win:** immediate developer utility, strong search demand, and a differentiated “explain + preview + validate” workflow instead of a single expression box.
+- Paste or drop JSON into a local editor.
+- Format with 2/4-space or tab indentation.
+- Validate as the user types and show a human-readable error with line/column when possible.
+- Minify for transport or config files.
+- Inspect the parsed structure in a collapsible tree with key count, depth, and byte size.
+- Search keys and values in the parsed document.
+- Copy or download the formatted/minified result.
+- Load a realistic sample without sending data anywhere.
 
-### 4. JSON-LD Schema Generator
+### SEO pages and copy intent
 
-**Core search intent:** “schema markup”, “schema generator”, “schema generator JSON”, “FAQ schema generator”, “organization schema generator”.
+The root page targets JSON Formatter / JSON Validator. Static explanatory sections cover JSON Beautifier, JSON Minifier, JSON Tree Viewer, and JSON error troubleshooting without creating unrelated tools or thin doorway pages.
 
-**Product wedge:** form-driven templates for FAQPage, Article, Organization, Product, Event, BreadcrumbList, and LocalBusiness; live JSON-LD output; copy/download; validation warnings; and an honest eligibility disclaimer that valid markup does not guarantee a rich result.
+### Guardrails
 
-**Why it can win:** high CPC, long-tail type-specific queries, and the growing need to make pages machine-readable for search and answer engines. Avoid unsupported claims about “guaranteed rich snippets.”
+- Never upload or persist pasted JSON on the server.
+- Call token/size/depth numbers “document stats,” not performance claims.
+- State that parsing uses the browser’s JSON implementation and that JSON5/comments/trailing commas are not silently accepted as standard JSON.
+- Do not promise ranking, speed multipliers, perfect compatibility, or rich-result eligibility.
+- Keep the product single-purpose; no UTM, cron, favicon, schema, or LLM routes in the deployed navigation.
 
-### 5. Favicon Generator
+## Source notes
 
-**Core search intent:** “favicon generator”, “favicon maker”, “favicon from image”, “favicon sizes”.
+1. [KDROI JSON Formatter analysis](https://kdroi.io/analysis/json-formatter) — 120K volume, KD32, CPC $2.40; third-party estimate.
+2. [KDROI Regex Tester analysis](https://kdroi.io/analysis/regex-tester) — 85K volume, KD28, CPC $1.95; third-party estimate.
+3. [KDROI Cron Expression Generator analysis](https://kdroi.io/analysis/cron-expression-generator) — 32K volume, KD28, CPC $1.85; third-party estimate.
+4. [KDROI keyword directory](https://kdroi.io/analysis) — cross-check of the relative developer-tool estimates.
+5. [SEOData Image Compressor](https://www.seodata.dev/keyword/image-compressor) — 60.5K US volume and paid competition field; not organic KD.
+6. [KeywordIdeas QR Code Generator](https://www.keywordideas.co/) — 673K volume and CPC estimate; methodology/geography not fully documented.
+7. [QRbug keyword comparison](https://qrbug.com/en/blog/qr-code-creator-vs-generator) — approximately 110K for the “free QR code generator” variant.
+8. [Toolseq high-volume tool list](https://toolseq.com/k) — additional directional volumes; geography and methodology are not documented, so not used as the primary decision source.
+9. [JSONLint traffic estimate](https://hypestat.com/info/jsonlint.com) — estimated monthly visits and traffic-source mix for a major JSON validator incumbent.
+10. [Ahrefs Keywords Explorer](https://ahrefs.com/keywords-explorer) — official description of volume, traffic potential, and KD workflow.
+11. [Ahrefs Keyword Difficulty Checker](https://ahrefs.com/keyword-difficulty) — official definition of KD and its backlink-based interpretation.
+12. [Ahrefs data-update guidance](https://help.ahrefs.com/en/articles/1077603-how-often-is-the-data-in-keywords-explorer-and-site-explorer-updated) — official refresh cadence caveat.
+13. [Ahrefs Free Keyword Generator](https://ahrefs.com/keyword-generator) — live tool attempted; result challenge blocked in this environment.
+14. [Ahrefs 2026 AI search trends](https://ahrefs.com/blog/ai-search-trends/) — contextual support for tool-style action intent and AI search growth; not used as JSON volume evidence.
+15. [Google Trends comparison](https://trends.google.com/trends/explore?date=today%205-y&geo=US&q=JSON%20formatter,regex%20tester,image%20compressor,cron%20expression%20generator,QR%20code%20generator) — direct manual directionality check.
+16. [Google Trends basics](https://newsinitiative.withgoogle.com/resources/trainings/google-trends/basics-of-google-trends/) — explains normalized 1–100 values.
+17. [Google Trends data FAQ](https://support.google.com/trends/answer/4365533?hl=en) — low-volume and normalization caveats.
+18. [Google Trends export and citation guidance](https://support.google.com/trends/answer/4365538?hl=en) — explains export and source attribution.
+19. [JSON format specification](https://www.json.org/json-en.html) — authoritative description of standard JSON syntax.
+20. [MDN JSON.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) — browser parsing behavior and syntax errors.
+21. [Ahrefs’ redirect guide](https://ahrefs.com/blog/redirects-for-seo/) — independent proof that developer/SEO practitioners use regex testing as part of technical workflows; also names regex101 as an incumbent.
 
-**Product wedge:** upload or draw a simple icon, preview across browser tabs, iOS, Android, Windows tiles, and manifest usage, then export a standards-aware package and HTML snippets. Keep processing in-browser where possible and clearly state that no image is uploaded.
+## Confidence and next validation
 
-**Why it can win:** visual product quality is easy to demonstrate, browser-only processing is a trust advantage, and the workflow is still commonly described as confusing across platforms.
+**Decision confidence: medium.** The volume/difficulty evidence is cross-source and not a paid Ahrefs export; Google Trends comparison was rate-limited here. The product is still a better match for the stated criteria than a generic QR generator or an AI pricing calculator with no verified head-term volume.
 
-## Rankability versus traffic potential
-
-The likely easiest first-page targets among the selected five are **JSON-LD Schema Generator**, **UTM Builder + QA**, and **Cron Expression Generator**, because the query intent is explicit and the long-tail can be mapped to focused pages.
-
-The most likely six-month traffic leader is **LLM Token & Cost Calculator**, followed by **Cron Expression Generator** and **UTM Builder + QA**, because adjacent model/pricing queries can produce a larger page cluster. That upside is also the most volatile: provider pricing and model names change quickly.
-
-## Research sources and cross-verification
-
-The following sources were checked across SEO databases, competitor traffic reports, Google documentation, developer communities, product directories, and live tools. Access date for this report is 2026-08-22 unless the source states otherwise.
-
-1. [Google Trends basics](https://newsinitiative.withgoogle.com/resources/trainings/google-trends/basics-of-google-trends/) — explains indexed 1–100 values and normalization.
-2. [Google Trends data FAQ](https://support.google.com/trends/answer/4365533?hl=en) — warns that low-volume terms can appear as 0 and that spikes are not proof of demand.
-3. [Google Trends Explore](https://trends.google.com/trends/explore) — target interface for directionality checks; direct Explore requests were rate-limited in this environment, so no fabricated numeric score is included.
-4. [Google Keyword Planner help](https://support.google.com/google-ads/answer/7337243?hl=en-GB) — confirms monthly-search and cost estimates as a separate demand source.
-5. [Ahrefs 2026 AI search trends](https://ahrefs.com/blog/ai-search-trends/) — supports the free-tool strategy and notes that tools satisfy “do, not read” intent.
-6. [Ahrefs 2026 SEO trends](https://ahrefs.com/blog/seo-trends/) — reports current AI/SEO growth and the llms.txt volume/trend caveat.
-7. [Ahrefs FAQ](https://ahrefs.com/faq) — confirms free Keyword Generator and other no-account tools exist, with intentionally limited metrics.
-8. [Ahrefs Free Keyword Generator](https://ahrefs.com/keyword-generator) — direct tool UI inspected; results widget was gated by a Cloudflare challenge in this environment.
-9. [Semrush UTMBuilder.net overview](https://www.semrush.com/website/utmbuilder.net/overview/) — reports 12.1K US volume for “utm builder”, related keyword volumes, and competitor organic traffic/backlink data.
-10. [Micro SaaS Ideas: UTM Builder and QA](https://www.microsaasideas.net/ideas/utm-builder-and-qa/) — independent 9.1K demand and 20.5K traffic-potential estimate, with medium competition.
-11. [SEOData “generate schema”](https://www.seodata.dev/keyword/generate-schema) — Google Ads-derived US volumes, CPC, and competition for schema-related keywords.
-12. [KDROI Cron Expression Generator](https://kdroi.io/analysis/cron-expression-generator) — 32K volume, KD 28, CPC $1.85, tool-site recommendation.
-13. [Webmasters Stack Exchange cron analysis](https://webmasters.stackexchange.com/questions/140653/why-are-google-keyword-planner-average-monthly-search-estimates-always-so-low) — cites crontab.guru at ~605K visits and discusses why planner volume and site traffic can differ.
-14. [DevPick developer tool map](https://devpick.sh/) — search-volume sizing across 118 utilities, including QR, CSS gradient, favicon, UTM, Open Graph, schema, robots, and conversion tools.
-15. [Probedex Price Per Token analysis](https://probedex.ai/domain/pricepertoken.com) — reports 207.9K monthly visits, 63% organic, and adjacent LLM/API pricing keyword volumes and SERP positions.
-16. [Toolify LLM Token Counter profile](https://www.toolify.ai/tool/llm-token-counter) — reports 37.9K monthly visits, 53.73% search traffic, and token-counter keyword traffic.
-17. [DailyTools AI Cost Calculator](https://thedailytools.net/ai/cost-calculator) — confirms current user behavior around browser-only AI cost estimates and privacy messaging.
-18. [FindPartner AI Cost Calculator](https://findpartner.app/ai-cost-calculator) — demonstrates model-comparison and per-request/monthly/yearly pricing intent.
-19. [CostLynx LLM Cost Planning Calculator](https://www.costlynx.com/resources/ai-cost-calculator) — confirms the unit-economics and cached-token planning use case.
-20. [FreeCalcKit embedding cost calculator](https://freecalckit.com/ai-cost-calculator/embedding-cost-calculator/) — validates adjacent RAG/embedding cost demand and the need for current-price disclaimers.
-21. [FrontendHelpers](https://frontendhelpers.com/) — confirms a local-browser utility pattern for robots and text analysis, including the distinction between crawling and indexing.
-22. [QCK free SEO tools](https://qck.co/pages/seo-tools) — confirms active demand for schema, AI crawler, robots, and no-signup SEO utilities.
-23. [Surfaceable SEO/GEO platform](https://www.surfaceable.io/) — confirms schema and AI-visibility tooling are active categories and that live SEO data is usually a separate dependency.
-
-## Build guardrails
-
-- Never promise rankings, traffic, rich-result eligibility, or AI citations.
-- Keep calculations private and local unless a server is genuinely required.
-- Add visible “last verified” timestamps for model prices and standards guidance.
-- Include canonical URLs, structured metadata, internal links, descriptive documentation, and static HTML content for every tool.
-- Treat the five tools as one coherent suite with a shared design system, but give each page a distinct interaction model and search intent.
+Before spending on promotion, validate the root keyword and the long-tail cluster in Ahrefs and Google Trends manually, inspect the current top 10 pages, and measure the first 30 days of Search Console impressions. The build below is designed to make that validation easy: one canonical product, one clear intent, one crawlable page, and no unrelated tools.

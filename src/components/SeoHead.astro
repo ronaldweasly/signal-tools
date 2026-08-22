@@ -11,15 +11,13 @@ const siteUrl = Astro.site ?? new URL(Astro.url.origin);
 const canonical = new URL(canonicalPath, siteUrl).toString();
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Signal Tools',
+  '@type': 'WebApplication',
+  name: 'JSON Lens',
   url: siteUrl.toString(),
   description,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${siteUrl.toString().replace(/\/$/, '')}/?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Any',
+  browserRequirements: 'Requires JavaScript',
 };
 ---
 <meta charset="UTF-8" />
@@ -33,7 +31,7 @@ const schema = {
 <meta property="og:description" content={description} />
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonical} />
-<meta property="og:site_name" content="Signal Tools" />
+<meta property="og:site_name" content="JSON Lens" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

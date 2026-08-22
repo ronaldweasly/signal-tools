@@ -1,6 +1,13 @@
 [
   {
     "date": "2026-08-22",
+    "macrostructure": "Component Playground",
+    "theme": "Terminal",
+    "enrichment": "none",
+    "brief": "JSON Lens formatter, validator, and inspector focused on one high-demand developer intent"
+  },
+  {
+    "date": "2026-08-22",
     "macrostructure": "Workbench",
     "theme": "Quiet",
     "enrichment": "none",

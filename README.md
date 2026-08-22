@@ -1,12 +1,6 @@
-# Signal Tools
+# JSON Lens
 
-Signal Tools is an SEO-first Astro utility suite for small technical marketing and development jobs. The five tools are browser-first, explain their inputs, and keep the output copy-ready:
-
-- `/utm-builder/` — build and validate campaign URLs.
-- `/llm-cost-calculator/` — estimate token usage and compare model costs.
-- `/cron-generator/` — generate, explain, and preview cron schedules.
-- `/schema-generator/` — create JSON-LD for common Schema.org types.
-- `/favicon-generator/` — create a text-based SVG favicon and install snippet.
+JSON Lens is a focused, SEO-first Astro utility for formatting, validating, minifying, and inspecting JSON. It runs entirely in the browser: paste a payload, find a syntax error, explore the tree, then copy or download the result.
 
 ## Local development
 
@@ -15,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Useful checks:
+Checks used for the production handoff:
 
 ```bash
 npm run check
@@ -24,11 +18,11 @@ npm run build
 npm run test:e2e
 ```
 
-The e2e suite starts an isolated Astro dev server on port `45321` to avoid collisions with other local projects.
+The Playwright suite starts an isolated Astro dev server on port `45321` so it does not collide with other local projects.
 
 ## Cloudflare Workers
 
-This project uses Astro’s current Cloudflare Workers adapter. Build first, then deploy the generated Wrangler configuration:
+The site uses Astro's Cloudflare Workers adapter. Build first, then deploy the generated Wrangler configuration:
 
 ```bash
 npm run build
@@ -40,4 +34,4 @@ The build generates `dist/server/wrangler.json`; the deploy script uses that fil
 
 ## Research
 
-The opportunity review, source links, verification caveats, and prioritization are in [`research/market-opportunity.md`](research/market-opportunity.md). The selection is a probability-weighted product decision, not a guarantee of ranking or traffic.
+The opportunity review and product decision are in [`research/market-opportunity.md`](research/market-opportunity.md). It compares six candidate categories and documents the limits of public keyword estimates, Google Trends access, and direct Ahrefs verification. The selection is a probability-weighted product decision, not a promise of rankings or traffic.

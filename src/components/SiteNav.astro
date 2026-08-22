@@ -2,25 +2,23 @@
 interface Props { currentPath?: string }
 const { currentPath = '/' } = Astro.props;
 const links = [
-  { href: '/utm-builder/', label: 'UTM' },
-  { href: '/llm-cost-calculator/', label: 'LLM cost' },
-  { href: '/cron-generator/', label: 'Cron' },
-  { href: '/schema-generator/', label: 'Schema' },
-  { href: '/favicon-generator/', label: 'Favicon' },
+  { href: '/#json-workspace', label: 'Open editor' },
+  { href: '/research/', label: 'Research' },
+  { href: '/about/', label: 'About' },
 ];
 ---
 <nav class="site-nav" aria-label="Primary" data-open="false">
-  <a class="site-nav__brand" href="/" aria-label="Signal Tools home">
+  <a class="site-nav__brand" href="/" aria-label="JSON Lens home">
     <span class="brand-mark" aria-hidden="true"></span>
-    Signal Tools
+    JSON Lens
   </a>
   <ul class="site-nav__links">
     {links.map((link) => (
       <li><a href={link.href} aria-current={currentPath === link.href ? 'page' : undefined}>{link.label}</a></li>
     ))}
   </ul>
-  <span class="site-nav__meta">local / five tools</span>
-  <button class="site-nav__menu" type="button" aria-label="Open tool menu" aria-expanded="false">Menu</button>
+  <span class="site-nav__meta">local / no upload</span>
+  <button class="site-nav__menu" type="button" aria-label="Open navigation menu" aria-expanded="false">Menu</button>
 </nav>
 <script>
   const nav = document.querySelector<HTMLElement>('.site-nav');
@@ -29,6 +27,6 @@ const links = [
     const open = nav?.dataset.open === 'true';
     if (nav) nav.dataset.open = String(!open);
     menu.setAttribute('aria-expanded', String(!open));
-    menu.setAttribute('aria-label', open ? 'Open tool menu' : 'Close tool menu');
+    menu.setAttribute('aria-label', open ? 'Open navigation menu' : 'Close navigation menu');
   });
 </script>

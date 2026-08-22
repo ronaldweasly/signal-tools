@@ -1,62 +1,57 @@
 import { expect, test } from '@playwright/test';
 
-const tools = [
-  { path: '/utm-builder/', heading: 'Build links you can trust.', input: '#base-url', value: 'https://example.com/new' },
-  { path: '/llm-cost-calculator/', heading: 'Price the workload, not the hype.', input: '#requests-day', value: '1000' },
-  { path: '/cron-generator/', heading: 'Make recurring work readable.', input: '#expression', value: '*/15 * * * *' },
-  { path: '/schema-generator/', heading: 'Make the page legible to machines.', input: '#schema-type', value: 'Organization' },
-  { path: '/favicon-generator/', heading: 'Make the smallest mark work harder.', input: '#icon-label', value: 'ST' },
-];
+test.describe('JSON Lens', () => {
+  test('formats the sample and renders document structure', async ({ page }) => {
+    await page.goto('/');
+    await expect(page).toHaveTitle(/JSON Lens/);
+    await expect(page.getByRole('heading', { name: /Make JSON readable/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Format JSON' }).click();
+    await expect(page.locator('#input-status')).toContainText('Valid JSON');
+    await expect(page.locator('#output-status')).toContainText('Formatted output ready');
+    await expect(page.locator('#json-output')).toContainText('"project"');
+    await expect(page.locator('#stat-keys')).not.toHaveText('—');
+    await expect(page.locator('#tree-output > .tree-node')).toHaveCount(1);
+  });
 
-for (const tool of tools) {
-  test(`${tool.path} loads and produces an interactive output`, async ({ page }) => {
-    await page.goto(tool.path);
-    await expect(page.getByRole('heading', { name: tool.heading })).toBeVisible();
-    const control = page.locator(tool.input);
-    if (tool.path === '/schema-generator/') {
-      await control.selectOption(tool.value);
-    } else {
-      await control.fill(tool.value);
-    }
-    if (tool.path === '/cron-generator/') await control.press('Tab');
-    await expect(page.locator('[aria-live="polite"]')).toBeVisible();
+  test('explains invalid JSON with a line and column', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#json-input').fill('{\n  "broken": true,\n}');
+    await page.getByRole('button', { name: 'Format JSON' }).click();
+    await expect(page.locator('#input-status')).toContainText('Invalid JSON');
+    await expect(page.locator('#input-status')).toContainText('line 3');
+    await expect(page.locator('#json-input')).toHaveAttribute('aria-invalid', 'true');
+  });
 
-    if (tool.path === '/utm-builder/') {
-      await expect(page.locator('#utm-output')).toContainText('utm_source=newsletter');
+  test('minifies output and filters the tree', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Minify' }).click();
+    const minified = await page.locator('#json-output').textContent();
+    expect(minified).not.toContain('\n');
+    await page.locator('#tree-search').fill('contributors');
+    await expect(page.locator('#tree-output')).toContainText('contributors');
+  });
+
+  test('keeps the focused routes and metadata available', async ({ page }) => {
+    for (const route of ['/', '/research/', '/about/', '/robots.txt', '/sitemap-index.xml', '/api/health']) {
+      const response = await page.goto(route);
+      expect(response?.status(), route).toBe(200);
     }
-    if (tool.path === '/llm-cost-calculator/') {
-      await expect(page.locator('#monthly-cost')).toContainText('$');
-      await expect(page.locator('#comparison-rows tr')).toHaveCount(6);
+    for (const oldRoute of ['/utm-builder/', '/llm-cost-calculator/', '/cron-generator/', '/schema-generator/', '/favicon-generator/']) {
+      const response = await page.goto(oldRoute);
+      expect(response?.status(), oldRoute).toBe(404);
     }
-    if (tool.path === '/cron-generator/') {
-      await expect(page.locator('#cron-description')).not.toHaveText('—');
-      await expect(page.locator('#next-runs .result-row')).toHaveCount(3);
-    }
-    if (tool.path === '/schema-generator/') {
-      await expect(page.locator('#schema-output')).toContainText('Organization');
-    }
-    if (tool.path === '/favicon-generator/') {
-      await expect(page.locator('#icon-preview svg')).toBeVisible();
-      await expect(page.locator('#favicon-snippet')).toContainText('icon.svg');
+    await page.goto('/');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /JSON/);
+    const structuredData = await page.locator('script[type="application/ld+json"]').evaluate((element) => element.textContent ?? '');
+    expect(structuredData).toContain('JSON Lens');
+  });
+
+  test('has no horizontal overflow at supported widths', async ({ page }) => {
+    for (const width of [320, 375, 414, 768]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+      expect(overflow, `horizontal overflow at ${width}px`).toBe(false);
     }
   });
-}
-
-test('home page has all five tools and no horizontal overflow on mobile', async ({ page }) => {
-  await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Make the small decisions cleanly.' })).toBeVisible();
-  await expect(page.getByRole('link', { name: /UTM Builder/ })).toBeVisible();
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  expect(overflow).toBeLessThanOrEqual(1);
-});
-
-test('all tool routes stay within narrow mobile viewports', async ({ page }) => {
-  for (const width of [320, 375, 414, 768]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const tool of tools) {
-      await page.goto(tool.path);
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-      expect(overflow, `${tool.path} overflows at ${width}px`).toBeLessThanOrEqual(1);
-    }
-  }
 });
