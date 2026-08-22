@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  site: process.env.PUBLIC_SITE_URL ?? 'https://signal-tools.pages.dev',
+  site: process.env.PUBLIC_SITE_URL ?? 'https://signal-tools.hfj1887.workers.dev',
   output: 'server',
   adapter: cloudflare({
     platformProxy: {
