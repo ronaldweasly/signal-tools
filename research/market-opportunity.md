@@ -59,13 +59,15 @@ The first release is one focused app with one job: **make JSON understandable an
 ### Core workflow
 
 - Paste or drop JSON into a local editor.
+- Browse a local JSON file or load the built-in sample.
 - Format with 2/4-space or tab indentation.
 - Validate as the user types and show a human-readable error with line/column when possible.
 - Minify for transport or config files.
+- Repair only safe syntax noise with a reversible undo path.
+- Compare two parsed documents and report added, removed, and changed paths.
 - Inspect the parsed structure in a collapsible tree with key count, depth, and byte size.
 - Search keys and values in the parsed document.
 - Copy or download the formatted/minified result.
-- Load a realistic sample without sending data anywhere.
 
 ### SEO pages and copy intent
 
@@ -78,6 +80,20 @@ The root page targets JSON Formatter / JSON Validator. Static explanatory sectio
 - State that parsing uses the browser’s JSON implementation and that JSON5/comments/trailing commas are not silently accepted as standard JSON.
 - Do not promise ranking, speed multipliers, perfect compatibility, or rich-result eligibility.
 - Keep the product single-purpose; no UTM, cron, favicon, schema, or LLM routes in the deployed navigation.
+
+## Competitive parity review: 2026-08-22
+
+The first release covered the basic formatter/validator loop. A second benchmark against the current public category leaders showed the actual bar is higher:
+
+| Competitor | Publicly visible strengths | JSON Lens response |
+|---|---|---|
+| [JSONLint](https://jsonlint.com/) | Format, pretty print, tree view, minify, URL/JSON query loading, compare, schema, JSONPath, repair/error analysis, and a broad tool index. | Keep the root focused, but add safe repair, file loading, tree controls, and structural compare in the primary workflow. |
+| [JSON Formatter & Validator](https://jsonformatter.curiousconcept.com/) | File drop, examples, selectable JSON specifications, a fixer for common syntax noise, expanded validation output, downloads, and URL/POST workflows. | Add browse/drop/example support and a deliberately narrow, reversible repair mode; explain strict standard JSON behavior instead of hiding it behind a mode switch. |
+| [JSON Crack](https://jsoncrack.com/) | Interactive graph/tree visualization, multi-format inputs, conversions, code/type generation, image export, query tools, and browser-local processing. | Make the tree inspector and compare workflow genuinely useful first; do not dilute the product into an unbounded converter directory. |
+| [JSON Editor Online](https://jsoneditoronline.org/) | A full editor surface with code/tree editing and transform/diff workflows; it sets the ceiling for structured editing. | Add a fast compare mode and better line-aware editing feedback while keeping JSON Lens lighter and local-first. |
+| [JSON Lint](https://jsonlinter.dev/) | A compact browser-only format/minify/copy/clear flow with line-and-column errors. | Treat this as the minimum baseline, then differentiate with safe repair, inspectable structure, file flow, and compare. |
+
+The upgrade is still one app, not five unrelated apps: every new capability answers the same job — understand and safely change a JSON document. The product boundary remains strict JSON by default, local processing, no remote URL fetch, and no invented speed or privacy guarantees.
 
 ## Source notes
 
@@ -102,6 +118,12 @@ The root page targets JSON Formatter / JSON Validator. Static explanatory sectio
 19. [JSON format specification](https://www.json.org/json-en.html) — authoritative description of standard JSON syntax.
 20. [MDN JSON.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse) — browser parsing behavior and syntax errors.
 21. [Ahrefs’ redirect guide](https://ahrefs.com/blog/redirects-for-seo/) — independent proof that developer/SEO practitioners use regex testing as part of technical workflows; also names regex101 as an incumbent.
+22. [JSONLint current tool page](https://jsonlint.com/) — current public feature surface: formatting, tree view, URL/query loading, minification, compare, schema, JSONPath, repair/error analysis, and related tools.
+23. [JSONLint all-tools index](https://jsonlint.com/tools) — current breadth of formatter, viewer, query, compare, and conversion intents in the category.
+24. [JSON Crack current feature page](https://jsoncrack.com/) — graph/tree visualization, multi-format support, conversions, code generation, image export, and local-processing claims.
+25. [Curious Concept JSON Formatter & Validator](https://jsonformatter.curiousconcept.com/) — file/example loading, selectable specifications, repair mode, error/warning output, downloads, and URL/POST parameters.
+26. [JSON Lint browser-only formatter](https://jsonlinter.dev/) — compact current baseline for local format, minify, copy, clear, and line/column validation.
+27. [ToolBox 2026 formatter comparison](https://www.toolbox-kit.com/blog/best-free-json-formatters-compared) — third-party feature matrix covering formatting, minification, validation, error location, syntax highlighting, and tree views across current tools.
 
 ## Confidence and next validation
 

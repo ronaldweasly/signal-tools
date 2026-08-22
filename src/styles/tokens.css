@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Component Playground · tone: instrumented-terminal · anchor hue: phosphor-lime · theme: Terminal */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V5 · macrostructure: Component Playground · tone: instrumented-terminal · anchor hue: phosphor-lime · theme: Terminal · contrast: pass (46–50) · nav: N8 · footer: Ft2 · slop: pass (51–69) · mobile: pass (36, 59, 61–69) */
 :root {
   --color-paper: oklch(17% 0.025 160);
   --color-paper-2: oklch(21% 0.028 160);
@@ -14,6 +14,12 @@
   --color-accent-ink: oklch(18% 0.045 140);
   --color-success: oklch(76% 0.14 153);
   --color-danger: oklch(73% 0.16 30);
+  --color-warning: oklch(82% 0.14 84);
+  --color-diff-added: oklch(76% 0.12 151);
+  --color-diff-removed: oklch(75% 0.14 26);
+  --color-diff-changed: oklch(82% 0.14 93);
+  --color-code-highlight: oklch(25% 0.06 128);
+  --color-input-gutter: oklch(16% 0.025 160);
   --color-focus: oklch(88% 0.14 104);
   --color-overlay: oklch(5% 0.03 160 / 0.75);
 
@@ -31,6 +37,7 @@
   --text-display: clamp(3.2rem, 8.8vw, 8.5rem);
   --line-body: 1.55;
   --line-tight: 0.96;
+  --line-code: 1.65;
 
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
@@ -51,6 +58,9 @@
   --rule-thick: 2px;
   --dur-short: 160ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --banner-height: 4.5rem;
   --z-sticky-nav: 20;
   --z-sticky: 10;
 }

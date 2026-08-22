@@ -4,7 +4,7 @@
 
 One focused Astro site for a single recurring intent: make JSON valid, readable, and inspectable.
 
-- `/` — JSON formatter, validator, minifier, error locator, stats panel, and searchable tree inspector.
+- `/` — JSON formatter, validator, minifier, safe repair, file/example loading, line-aware editor, stats panel, searchable tree inspector, and structural comparison.
 - `/research/` — evidence and caveats behind the product decision.
 - `/about/` — product boundary and privacy behavior.
 
@@ -16,6 +16,7 @@ There are no unrelated utility routes. The old suite remains recoverable in Git 
 - Server-rendered explanatory copy and FAQ content; browser-only JSON transformation and inspection.
 - No database, API keys, analytics dependency, or upload endpoint in v1.
 - Pure JSON transformations in `src/lib/json.ts` so parsing, sorting, minification, error locations, and stats are unit-testable.
+- Repair and comparison are pure functions with explicit tests; repair is limited to comments, trailing commas, and a leading BOM.
 - Self-hosted Geist, IBM Plex Sans, and JetBrains Mono typography.
 - `tokens.css` is the source of truth for color, type, spacing, radius, motion, and z-index tokens.
 - Hallmark macrostructure: Component Playground. The editor and tree preview are the primary content, not decorative illustrations.
@@ -24,6 +25,9 @@ There are no unrelated utility routes. The old suite remains recoverable in Git 
 
 - Format and minify preserve standard JSON semantics; optional key sorting is recursive.
 - Invalid input keeps the output safe and explains a line, column, and parser message.
+- The editor keeps line numbers in sync, highlights the error row, and supports `⌘/Ctrl + Enter`, Tab indentation, browse, and drop-file loading.
+- Compare mode reports added, removed, and changed JSON paths while ignoring formatting-only differences.
+- Tree controls support search plus expand/collapse without injecting user content as HTML.
 - Tree rendering uses DOM text nodes rather than injecting user input as HTML.
 - Copy gives a short “Copied” state; download creates a local `formatted.json` file.
 - Inputs remain usable at 320px, 375px, 414px, and 768px widths.

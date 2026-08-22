@@ -1,6 +1,6 @@
 # JSON Lens
 
-JSON Lens is a focused, SEO-first Astro utility for formatting, validating, minifying, and inspecting JSON. It runs entirely in the browser: paste a payload, find a syntax error, explore the tree, then copy or download the result.
+JSON Lens is a focused, SEO-first Astro utility for formatting, validating, safely repairing, comparing, and inspecting JSON. It runs entirely in the browser: paste or drop a payload, find a syntax error, compare structure, explore the tree, then copy or download the result.
 
 ## Local development
 

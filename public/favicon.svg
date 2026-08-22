@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>JSON Lens</title>
+  <rect width="64" height="64" rx="12" fill="#0b1712"/>
+  <path d="M18 14h8v7h-4v22h4v7h-8V14Zm28 0v36h-8v-7h4V21h-4v-7h8Z" fill="#b4d92a"/>
+  <path d="M29 22h6v20h-6z" fill="#edf2dc"/>
+</svg>

@@ -12,6 +12,17 @@ const sampleJson = `{
   "limits": null
 }`;
 
+const compareJson = `{
+  "project": "json-lens",
+  "active": false,
+  "contributors": ["Mira", "Dev", "Lee"],
+  "release": {
+    "version": 2,
+    "channels": ["stable"]
+  },
+  "limits": { "requests": 100 }
+}`;
+
 const sampleOutput = `{
   "project": "json-lens",
   "active": true,
@@ -29,57 +40,72 @@ const sampleOutput = `{
   "limits": null
 }`;
 ---
-<BaseLayout title="JSON Lens — formatter, validator, and inspector" description="Format, validate, minify, and inspect JSON locally in your browser. Find syntax errors with a readable line and column location, then explore the document as a tree." currentPath="/" tool="json-lens">
+<BaseLayout title="JSON Lens — the private JSON workbench" description="Format, validate, safely repair, compare, and inspect JSON locally in your browser. Find syntax errors with readable line and column locations, then copy or download a trustworthy result." currentPath="/" tool="json-lens">
   <main class="site-main site-shell json-lens-page">
     <section class="json-hero" aria-labelledby="page-title">
-      <div>
-        <p class="eyebrow">JSON LENS / FORMATTER + VALIDATOR</p>
-        <h1 id="page-title">Make JSON readable before it becomes a bug.</h1>
-        <p class="json-hero__lede">A private, browser-first JSON formatter that validates syntax, explains where parsing failed, and lets you inspect the shape of a document without sending it anywhere.</p>
-        <div class="json-hero__meta" aria-label="Product properties">
-          <span>no upload</span>
-          <span>standard JSON</span>
-          <span>runs locally</span>
+      <div class="json-hero__copy">
+        <p class="hero-kicker"><span class="signal-dot" aria-hidden="true"></span> JSON LENS / LOCAL-FIRST TOOLING</p>
+        <h1 id="page-title">See the structure. Ship the payload.</h1>
+        <p class="json-hero__lede">A serious JSON workbench for the moment between “this looks wrong” and “this is safe to send.” Format, repair, compare, and inspect without uploading your data.</p>
+        <div class="hero-actions">
+          <a class="button" href="#json-workspace">Open workspace <span aria-hidden="true">↓</span></a>
+          <span class="hero-note"><span class="hero-note__mark" aria-hidden="true"></span> browser-only by default</span>
         </div>
       </div>
-      <aside class="hero-signal" aria-label="JSON Lens capabilities">
-        <p class="hero-signal__label">/workspace status</p>
+      <aside class="hero-signal" aria-label="JSON Lens workflow">
+        <p class="hero-signal__label">/workflow</p>
         <div class="hero-signal__readout">
           <strong>LOCAL</strong>
-          <span>Input stays in this tab. Output is yours to copy or download.</span>
+          <span>Nothing leaves this tab unless you choose to download it.</span>
         </div>
-        <div class="hero-signal__rule" aria-hidden="true"></div>
+        <div class="hero-signal__steps" aria-label="Workflow steps">
+          <span>parse</span><span>repair</span><span>compare</span><span>inspect</span>
+        </div>
       </aside>
     </section>
 
     <section id="json-workspace" class="workspace-section" aria-labelledby="workspace-title">
       <div class="workspace-heading">
-        <div>
-          <p class="eyebrow">01 / inspect a document</p>
-          <h2 id="workspace-title">The JSON workspace.</h2>
+        <div class="workspace-heading__copy">
+          <p class="kicker">Workbench</p>
+          <h2 id="workspace-title">Read it, fix it, move on.</h2>
         </div>
-        <p>Paste a payload, drop a <span class="mono">.json</span> file, or load the example. Every action is deterministic and visible.</p>
+        <p>Use the mode that matches the job. Every transformation is deterministic, local, and visible.</p>
       </div>
 
-      <div class="workspace-bar">
-        <div class="workspace-bar__title">JSON LENS <span class="muted">/ editor</span></div>
-        <div class="workspace-bar__actions">
-          <button class="button quiet" id="load-sample" type="button">Load sample</button>
-          <button class="button quiet" id="clear-json" type="button">Clear</button>
-        </div>
+      <div class="workspace-modebar" role="tablist" aria-label="JSON workbench modes">
+        <button class="mode-tab is-active" id="mode-format" type="button" role="tab" aria-selected="true" aria-controls="format-panel">Format &amp; inspect</button>
+        <button class="mode-tab" id="mode-compare" type="button" role="tab" aria-selected="false" aria-controls="compare-panel">Compare JSON</button>
+        <span class="modebar__meta">local / no upload</span>
       </div>
 
-      <div class="workspace-grid">
-        <section class="editor-panel" aria-labelledby="input-title">
-          <header class="editor-panel__head">
-            <h3 id="input-title">Input</h3>
-            <p>paste or drop file</p>
-          </header>
-          <div class="editor-panel__body">
-            <label class="visually-hidden" for="json-input">JSON input</label>
-            <textarea id="json-input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-status" set:text={sampleJson}></textarea>
-            <div class="editor-controls">
-              <div class="field-row">
+      <section id="format-panel" class="format-panel" role="tabpanel" aria-labelledby="mode-format">
+        <div class="workspace-bar">
+          <div class="workspace-bar__title">JSON LENS <span class="muted">/ editor</span></div>
+          <div class="workspace-bar__actions">
+            <button class="button quiet" id="load-sample" type="button">Load sample</button>
+            <button class="button quiet" id="clear-json" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="workspace-grid">
+          <section class="editor-panel" aria-labelledby="input-title">
+            <header class="editor-panel__head">
+              <h3 id="input-title">Input</h3>
+              <p id="input-meta">0 lines · strict JSON</p>
+            </header>
+            <div class="editor-panel__body">
+              <div class="file-actions">
+                <label class="button quiet" for="json-file">Browse .json</label>
+                <input id="json-file" type="file" accept=".json,application/json,text/plain" />
+                <span id="file-note">or drop a file onto the editor</span>
+              </div>
+              <div id="input-dropzone" class="editor-shell">
+                <div id="input-lines" class="editor-lines" aria-hidden="true"></div>
+                <label class="visually-hidden" for="json-input">JSON input</label>
+                <textarea id="json-input" aria-label="JSON input" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-status" data-gramm="false" set:text={sampleJson}></textarea>
+              </div>
+              <div class="editor-options">
                 <label for="indent-size">Indent</label>
                 <select id="indent-size">
                   <option value="2" selected>2 spaces</option>
@@ -88,112 +114,195 @@ const sampleOutput = `{
                 </select>
                 <label class="check-label" for="sort-keys"><input id="sort-keys" type="checkbox" /> sort keys</label>
               </div>
-            </div>
-            <div class="editor-actions" aria-label="JSON actions">
-              <button class="button" id="format-json" type="button">Format JSON</button>
-              <button class="button secondary" id="minify-json" type="button">Minify</button>
-            </div>
-            <p class="status" id="input-status" aria-live="polite">Ready to inspect.</p>
-          </div>
-        </section>
-
-        <section class="editor-panel" aria-labelledby="output-title">
-          <header class="editor-panel__head">
-            <h3 id="output-title">Output</h3>
-            <p id="output-status" class="status" aria-live="polite">Formatted sample</p>
-          </header>
-          <div class="editor-panel__body output-stack">
-            <pre id="json-output" class="code-output" aria-label="Formatted JSON output" set:text={sampleOutput}></pre>
-            <div class="output-actions">
-              <button class="button secondary" id="copy-json" type="button">Copy output</button>
-              <button class="button secondary" id="download-json" type="button">Download .json</button>
-            </div>
-            <dl class="stat-grid" aria-label="Document statistics">
-              <div class="stat"><dt>bytes</dt><dd id="stat-bytes">—</dd></div>
-              <div class="stat"><dt>keys</dt><dd id="stat-keys">—</dd></div>
-              <div class="stat"><dt>depth</dt><dd id="stat-depth">—</dd></div>
-              <div class="stat"><dt>lines</dt><dd id="stat-lines">—</dd></div>
-            </dl>
-            <div class="tree-inspector">
-              <div class="tree-inspector__head">
-                <label for="tree-search">Tree inspector</label>
-                <input id="tree-search" type="search" placeholder="filter keys or values" autocomplete="off" />
+              <div class="editor-actions" aria-label="JSON actions">
+                <button class="button" id="format-json" type="button" aria-keyshortcuts="Control+Enter Meta+Enter">Format JSON</button>
+                <button class="button secondary" id="minify-json" type="button">Minify</button>
+                <button class="button secondary" id="repair-json" type="button">Repair safe issues</button>
+                <button class="button quiet undo-button" id="undo-repair" type="button" hidden>Undo repair</button>
               </div>
-              <div id="tree-output" class="tree-output" aria-live="polite"></div>
+              <p class="status" id="input-status" aria-live="polite">Ready to inspect.</p>
+              <p class="shortcut-note"><span>⌘/Ctrl + Enter</span> format <span>Tab</span> indent <span>drop</span> load file</p>
             </div>
+          </section>
+
+          <section class="editor-panel output-panel" aria-labelledby="output-title">
+            <header class="editor-panel__head">
+              <h3 id="output-title">Output</h3>
+              <p id="output-status" class="status" aria-live="polite">Formatted sample</p>
+            </header>
+            <div class="editor-panel__body output-stack">
+              <div class="output-actions">
+                <button class="button secondary" id="copy-json" type="button">Copy output</button>
+                <button class="button secondary" id="download-json" type="button">Download .json</button>
+              </div>
+              <pre id="json-output" class="code-output" aria-label="Formatted JSON output" set:text={sampleOutput}></pre>
+              <dl class="stat-grid" aria-label="Document statistics">
+                <div class="stat"><dt>bytes</dt><dd id="stat-bytes">—</dd></div>
+                <div class="stat"><dt>keys</dt><dd id="stat-keys">—</dd></div>
+                <div class="stat"><dt>depth</dt><dd id="stat-depth">—</dd></div>
+                <div class="stat"><dt>lines</dt><dd id="stat-lines">—</dd></div>
+              </dl>
+              <div class="tree-inspector">
+                <div class="tree-inspector__head">
+                  <div>
+                    <label for="tree-search">Structure</label>
+                    <span id="tree-result-count" class="tree-result-count" aria-live="polite">ready</span>
+                  </div>
+                  <div class="tree-actions">
+                    <button class="button quiet" id="expand-tree" type="button">Expand all</button>
+                    <button class="button quiet" id="collapse-tree" type="button">Collapse</button>
+                  </div>
+                </div>
+                <input id="tree-search" type="search" placeholder="filter keys or values" autocomplete="off" aria-label="Filter JSON structure" />
+                <div id="tree-output" class="tree-output" aria-live="polite"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="compare-panel" class="compare-panel" role="tabpanel" aria-labelledby="mode-compare" hidden aria-hidden="true">
+        <div class="compare-heading">
+          <div>
+            <p class="kicker">Structural diff</p>
+            <h3>Find what changed.</h3>
           </div>
-        </section>
-      </div>
+          <p>Compare parsed values, not whitespace. Paths stay stable so you can jump straight to the meaningful difference.</p>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-editor">
+            <div class="compare-editor__head"><label for="compare-left">Before</label><button class="button quiet" id="use-current-input" type="button">Use current input</button></div>
+            <textarea id="compare-left" spellcheck="false" aria-describedby="compare-status" set:text={sampleJson}></textarea>
+          </div>
+          <div class="compare-editor">
+            <div class="compare-editor__head"><label for="compare-right">After</label><span class="compare-hint">edit to compare</span></div>
+            <textarea id="compare-right" spellcheck="false" aria-describedby="compare-status" set:text={compareJson}></textarea>
+          </div>
+        </div>
+        <div class="compare-actions">
+          <button class="button" id="run-compare" type="button">Compare documents</button>
+          <button class="button secondary" id="copy-diff" type="button" disabled>Copy diff</button>
+          <p id="compare-status" class="status" aria-live="polite">Two documents are ready.</p>
+        </div>
+        <div id="compare-results" class="compare-results" aria-live="polite">
+          <p class="compare-empty">Run a comparison to see added, removed, and changed paths.</p>
+        </div>
+      </section>
     </section>
 
-    <section class="content-section" aria-labelledby="checks-title">
+    <section class="content-section" aria-labelledby="why-title">
       <div class="content-grid">
-        <div>
-          <p class="eyebrow">02 / what it checks</p>
-          <h2 id="checks-title">A small tool with a clear job.</h2>
+        <div class="content-section__intro">
+          <p class="kicker">Why JSON Lens</p>
+          <h2 id="why-title">The boring parts are the product.</h2>
         </div>
         <div class="content-section__copy">
-          <p>JSON Lens handles the recurring moments when a payload is almost right: a missing comma, a trailing comma, an unexpected quote, or an object that has become difficult to navigate by eye.</p>
+          <p>Most JSON tools make you choose between a tiny validator and an overbuilt editor. JSON Lens keeps the high-frequency path tight, then gives you enough structure to diagnose a real payload.</p>
           <ul class="feature-list">
-            <li><strong>FORMAT</strong><span>Turn compact or uneven JSON into readable, copy-ready output with a chosen indent.</span></li>
-            <li><strong>EXPLAIN</strong><span>When parsing fails, get the browser’s error translated into a line and column you can jump to.</span></li>
-            <li><strong>INSPECT</strong><span>Search the resulting tree to find a key, a value, or the branch that needs attention.</span></li>
+            <li><strong>LOCATE</strong><span>Line numbers and a highlighted error row turn “unexpected token” into a place to look.</span></li>
+            <li><strong>REPAIR</strong><span>Remove only safe, common noise — comments, trailing commas, or a byte-order mark — and keep an undo path.</span></li>
+            <li><strong>COMPARE</strong><span>Diff parsed JSON by path so formatting changes do not drown out the fields that actually moved.</span></li>
+            <li><strong>INSPECT</strong><span>Expand, collapse, and filter the structure without handing a private API response to a remote service.</span></li>
           </ul>
         </div>
       </div>
     </section>
 
-    <section class="content-section" aria-labelledby="faq-title">
+    <section class="content-section standards-section" aria-labelledby="standards-title">
       <div class="content-grid">
-        <div>
-          <p class="eyebrow">03 / quick answers</p>
+        <div class="content-section__intro">
+          <p class="kicker">Trust surface</p>
+          <h2 id="standards-title">Strict by default. Clear by design.</h2>
+        </div>
+        <div class="standards-list">
+          <div class="standard-row"><strong>STANDARD JSON</strong><span>Uses the browser’s native parser. Comments, trailing commas, and JSON5 syntax are not silently accepted as valid.</span></div>
+          <div class="standard-row"><strong>SAFE REPAIR</strong><span>Repair is opt-in, limited to predictable cleanup, and reversible. The original input is never overwritten without an undo path.</span></div>
+          <div class="standard-row"><strong>LOCAL PROCESSING</strong><span>Formatting, repair, comparison, tree rendering, copy, and download happen in this tab. There is no upload endpoint.</span></div>
+          <div class="standard-row"><strong>REAL OUTPUT</strong><span>Document stats describe the current payload. JSON Lens makes no invented speed, ranking, or security promises.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section faq-section" aria-labelledby="faq-title">
+      <div class="content-grid">
+        <div class="content-section__intro">
+          <p class="kicker">Questions</p>
           <h2 id="faq-title">Before you paste.</h2>
         </div>
         <div class="faq-list">
           <details>
             <summary>Does JSON Lens upload my data?</summary>
-            <p>No. Parsing, formatting, tree rendering, copying, and downloading happen in your browser. Avoid pasting secrets into any browser tool unless your own security policy allows it.</p>
+            <p>No. JSON Lens does not send pasted or dropped JSON to a server. Your browser parses and transforms it locally. Still follow your own security policy for sensitive data.</p>
           </details>
           <details>
-            <summary>Why does a comment make JSON invalid?</summary>
-            <p>Standard JSON has strings, numbers, booleans, null, arrays, and objects. Comments and trailing commas belong to other syntaxes, so they must be removed before strict JSON parsing.</p>
+            <summary>What can Repair safe issues change?</summary>
+            <p>It removes JavaScript-style comments, trailing commas before closing brackets, and a leading byte-order mark. It does not guess at missing quotes, single quotes, or malformed values.</p>
           </details>
           <details>
-            <summary>What does depth mean?</summary>
-            <p>Depth is the deepest nested array or object level in the parsed value. It is a structural hint, not a quality score.</p>
+            <summary>Can I use JSON5 or comments?</summary>
+            <p>Strict validation follows standard JSON. If your input contains comments or trailing commas, use Repair safe issues to produce a standard JSON candidate, then format it and review the result.</p>
+          </details>
+          <details>
+            <summary>What happens to large documents?</summary>
+            <p>Everything runs locally, so capacity depends on the browser and device. For very large payloads, use the file workflow and keep the tree collapsed until you need a branch.</p>
           </details>
         </div>
       </div>
     </section>
 
     <aside class="research-callout" aria-label="Product research">
-      <p><span class="eyebrow">Decision log</span><br />Why this focused tool was chosen from six candidate categories.</p>
+      <p><span class="kicker">Decision log</span><br />Why this focused JSON product was chosen from six candidate categories.</p>
       <a href="/research/">Read the evidence ↗</a>
     </aside>
   </main>
 </BaseLayout>
 
 <script>
-  import { formatJsonText, getJsonErrorLocation, getJsonStats, minifyJsonText } from '../lib/json';
-  import type { JsonValue } from '../lib/json';
+  import { compareJsonText, formatJsonText, getJsonErrorLocation, getJsonStats, minifyJsonText, repairJsonText } from '../lib/json';
+  import type { JsonDiff, JsonValue } from '../lib/json';
 
   const input = document.querySelector<HTMLTextAreaElement>('#json-input');
   const output = document.querySelector<HTMLElement>('#json-output');
   const inputStatus = document.querySelector<HTMLElement>('#input-status');
   const outputStatus = document.querySelector<HTMLElement>('#output-status');
+  const inputMeta = document.querySelector<HTMLElement>('#input-meta');
   const indentSize = document.querySelector<HTMLSelectElement>('#indent-size');
   const sortKeys = document.querySelector<HTMLInputElement>('#sort-keys');
+  const inputLines = document.querySelector<HTMLElement>('#input-lines');
+  const inputDropzone = document.querySelector<HTMLElement>('#input-dropzone');
+  const fileInput = document.querySelector<HTMLInputElement>('#json-file');
+  const fileNote = document.querySelector<HTMLElement>('#file-note');
   const treeOutput = document.querySelector<HTMLElement>('#tree-output');
   const treeSearch = document.querySelector<HTMLInputElement>('#tree-search');
+  const treeResultCount = document.querySelector<HTMLElement>('#tree-result-count');
   const copyButton = document.querySelector<HTMLButtonElement>('#copy-json');
   const downloadButton = document.querySelector<HTMLButtonElement>('#download-json');
   const sampleButton = document.querySelector<HTMLButtonElement>('#load-sample');
   const clearButton = document.querySelector<HTMLButtonElement>('#clear-json');
   const formatButton = document.querySelector<HTMLButtonElement>('#format-json');
   const minifyButton = document.querySelector<HTMLButtonElement>('#minify-json');
+  const repairButton = document.querySelector<HTMLButtonElement>('#repair-json');
+  const undoRepairButton = document.querySelector<HTMLButtonElement>('#undo-repair');
+  const expandButton = document.querySelector<HTMLButtonElement>('#expand-tree');
+  const collapseButton = document.querySelector<HTMLButtonElement>('#collapse-tree');
+  const formatModeButton = document.querySelector<HTMLButtonElement>('#mode-format');
+  const compareModeButton = document.querySelector<HTMLButtonElement>('#mode-compare');
+  const formatPanel = document.querySelector<HTMLElement>('#format-panel');
+  const comparePanel = document.querySelector<HTMLElement>('#compare-panel');
+  const compareLeft = document.querySelector<HTMLTextAreaElement>('#compare-left');
+  const compareRight = document.querySelector<HTMLTextAreaElement>('#compare-right');
+  const runCompareButton = document.querySelector<HTMLButtonElement>('#run-compare');
+  const copyDiffButton = document.querySelector<HTMLButtonElement>('#copy-diff');
+  const compareStatus = document.querySelector<HTMLElement>('#compare-status');
+  const compareResults = document.querySelector<HTMLElement>('#compare-results');
+  const useCurrentInputButton = document.querySelector<HTMLButtonElement>('#use-current-input');
 
-  if (input && output && inputStatus && outputStatus && indentSize && sortKeys && treeOutput && treeSearch && copyButton && downloadButton && sampleButton && clearButton && formatButton && minifyButton) {
+  if (input && output && inputStatus && outputStatus && inputMeta && indentSize && sortKeys && inputLines && inputDropzone && fileInput && fileNote && treeOutput && treeSearch && treeResultCount && copyButton && downloadButton && sampleButton && clearButton && formatButton && minifyButton && repairButton && undoRepairButton && expandButton && collapseButton && formatModeButton && compareModeButton && formatPanel && comparePanel && compareLeft && compareRight && runCompareButton && copyDiffButton && compareStatus && compareResults && useCurrentInputButton) {
+    const sampleJson = input.value;
     let currentOutput = output.textContent ?? '';
+    let previousInput = '';
+    let currentDiffText = '';
+    let touched = false;
 
     const stats = {
       bytes: document.querySelector<HTMLElement>('#stat-bytes'),
@@ -202,9 +311,27 @@ const sampleOutput = `{
       lines: document.querySelector<HTMLElement>('#stat-lines'),
     };
 
-    const setStatus = (element: HTMLElement, message: string, tone: 'error' | 'success' | 'info' = 'info') => {
+    const setStatus = (element: HTMLElement, message: string, tone: 'error' | 'success' | 'info' | 'warning' = 'info') => {
       element.textContent = message;
       element.dataset.tone = tone;
+    };
+
+    const escapeHtml = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+    const highlightJson = (text: string) => {
+      const pattern = /"(?:\\.|[^"\\])*"(?=\s*:)|"(?:\\.|[^"\\])*"|-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?|\b(?:true|false|null)\b|[{}[\],:]/g;
+      let html = '';
+      let cursor = 0;
+      for (const match of text.matchAll(pattern)) {
+        const token = match[0];
+        const index = match.index ?? 0;
+        html += escapeHtml(text.slice(cursor, index));
+        const isKey = /^"/.test(token) && /^\s*:/.test(text.slice(index + token.length));
+        const type = isKey ? 'key' : /^"/.test(token) ? 'string' : /^(true|false|null)$/.test(token) ? 'literal' : /^-?\d/.test(token) ? 'number' : 'punctuation';
+        html += `<span class="json-token json-token--${type}">${escapeHtml(token)}</span>`;
+        cursor = index + token.length;
+      }
+      return html + escapeHtml(text.slice(cursor));
     };
 
     const updateStats = (value: JsonValue, text: string) => {
@@ -219,20 +346,61 @@ const sampleOutput = `{
       Object.values(stats).forEach((element) => { if (element) element.textContent = '—'; });
     };
 
-    const isContainer = (value: JsonValue) => Array.isArray(value) || (typeof value === 'object' && value !== null);
+    const syncLineNumbers = () => {
+      const lines = input.value.split('\n').length;
+      inputLines.replaceChildren();
+      for (let index = 1; index <= lines; index += 1) {
+        const line = document.createElement('span');
+        line.textContent = String(index);
+        line.dataset.line = String(index);
+        inputLines.append(line);
+      }
+      inputLines.scrollTop = input.scrollTop;
+      inputMeta.textContent = `${lines.toLocaleString()} line${lines === 1 ? '' : 's'} · ${new TextEncoder().encode(input.value).length.toLocaleString()} bytes · strict JSON`;
+    };
+
+    const clearErrorLine = () => {
+      inputLines.querySelectorAll('.is-error').forEach((line) => line.classList.remove('is-error'));
+      input.removeAttribute('aria-invalid');
+    };
+
+    const markErrorLine = (lineNumber: number) => {
+      clearErrorLine();
+      const line = inputLines.querySelector<HTMLElement>(`[data-line="${lineNumber}"]`);
+      line?.classList.add('is-error');
+      input.setAttribute('aria-invalid', 'true');
+    };
+
+    const updateTreeResultCount = () => {
+      const nodes = Array.from(treeOutput.querySelectorAll<HTMLElement>('.tree-node'));
+      const visible = nodes.filter((node) => !node.hidden).length;
+      treeResultCount.textContent = treeSearch.value.trim() ? `${visible} match${visible === 1 ? '' : 'es'}` : `${nodes.length} nodes`;
+    };
+
+    const filterTree = (query: string) => {
+      const normalized = query.trim().toLowerCase();
+      const nodes = Array.from(treeOutput.querySelectorAll<HTMLElement>('.tree-node'));
+      nodes.forEach((node) => {
+        const matches = !normalized || (node.dataset.search ?? '').includes(normalized);
+        node.hidden = !matches;
+        if (normalized && matches) node.querySelectorAll('details').forEach((detail) => { detail.open = true; });
+      });
+      updateTreeResultCount();
+    };
 
     const renderTree = (value: JsonValue) => {
       treeOutput.replaceChildren();
       let nodeCount = 0;
-      const maxNodes = 1200;
+      const maxNodes = 1600;
 
-      const createNode = (node: JsonValue, label: string, depth: number): HTMLElement => {
+      const createNode = (node: JsonValue, label: string, path: string, depth: number): HTMLElement => {
         nodeCount += 1;
         const wrapper = document.createElement('div');
         wrapper.className = 'tree-node';
-        wrapper.dataset.search = `${label} ${JSON.stringify(node)}`.toLowerCase();
+        wrapper.dataset.search = `${label} ${path} ${JSON.stringify(node)}`.toLowerCase();
+        wrapper.dataset.path = path;
 
-        if (!isContainer(node)) {
+        if (!(Array.isArray(node) || (typeof node === 'object' && node !== null))) {
           const row = document.createElement('div');
           row.className = 'tree-node__primitive';
           const key = document.createElement('span');
@@ -267,11 +435,14 @@ const sampleOutput = `{
         if (nodeCount >= maxNodes) {
           const limit = document.createElement('p');
           limit.className = 'tree-node__type';
-          limit.textContent = 'Tree preview capped at 1,200 nodes.';
+          limit.textContent = 'Tree preview capped at 1,600 nodes.';
           details.append(limit);
         } else {
-          entries.forEach(([childKey, child]) => {
-            if (nodeCount < maxNodes) details.append(createNode(child, childKey, depth + 1));
+          entries.forEach(([childKey, child], index) => {
+            if (nodeCount < maxNodes) {
+              const childPath = Array.isArray(node) ? `${path}[${index}]` : `${path}[${JSON.stringify(childKey)}]`;
+              details.append(createNode(child, childKey, childPath, depth + 1));
+            }
           });
         }
 
@@ -279,36 +450,35 @@ const sampleOutput = `{
         return wrapper;
       };
 
-      treeOutput.append(createNode(value, '$', 0));
+      treeOutput.append(createNode(value, '$', '$', 0));
       filterTree(treeSearch.value);
     };
 
-    const filterTree = (query: string) => {
-      const normalized = query.trim().toLowerCase();
-      const nodes = Array.from(treeOutput.querySelectorAll<HTMLElement>('.tree-node'));
-      nodes.forEach((node) => {
-        const matches = !normalized || (node.dataset.search ?? '').includes(normalized);
-        node.hidden = !matches;
-        if (normalized && matches) node.querySelectorAll('details').forEach((detail) => { detail.open = true; });
-      });
+    const setTreeExpanded = (expanded: boolean) => {
+      treeOutput.querySelectorAll('details').forEach((detail) => { detail.open = expanded; });
     };
 
-    const showInvalid = (error: unknown) => {
-      const location = getJsonErrorLocation(input.value, error);
-      input.setAttribute('aria-invalid', 'true');
-      setStatus(inputStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
-      setStatus(outputStatus, 'No valid document to inspect.', 'error');
+    const showInvalid = (error: unknown, field = input) => {
+      const location = getJsonErrorLocation(field.value, error);
+      if (field === input) {
+        markErrorLine(location.line);
+        setStatus(inputStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
+        setStatus(outputStatus, 'Output kept from the last valid run.', 'warning');
+      } else {
+        setStatus(compareStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
+      }
     };
 
     const validate = () => {
+      syncLineNumbers();
       if (!input.value.trim()) {
-        input.removeAttribute('aria-invalid');
+        clearErrorLine();
         setStatus(inputStatus, 'Empty document · add JSON to begin.', 'info');
         return false;
       }
       try {
         JSON.parse(input.value);
-        input.removeAttribute('aria-invalid');
+        clearErrorLine();
         setStatus(inputStatus, 'Valid JSON · ready to format.', 'success');
         return true;
       } catch (error) {
@@ -317,18 +487,22 @@ const sampleOutput = `{
       }
     };
 
+    const renderOutput = (value: JsonValue, text: string, statusMessage: string) => {
+      currentOutput = text;
+      output.innerHTML = highlightJson(text);
+      downloadButton.disabled = false;
+      updateStats(value, text);
+      renderTree(value);
+      setStatus(outputStatus, statusMessage, 'success');
+    };
+
     const runFormat = () => {
       try {
         const indent = indentSize.value === 'tab' ? 'tab' : Number(indentSize.value);
         const result = formatJsonText(input.value, indent, sortKeys.checked);
-        currentOutput = result.output;
-        output.textContent = result.output;
-        input.removeAttribute('aria-invalid');
-        downloadButton.disabled = false;
-        updateStats(result.value, result.output);
-        renderTree(result.value);
+        renderOutput(result.value, result.output, 'Formatted output ready.');
+        clearErrorLine();
         setStatus(inputStatus, 'Valid JSON · formatted locally.', 'success');
-        setStatus(outputStatus, 'Formatted output ready.', 'success');
       } catch (error) {
         showInvalid(error);
       }
@@ -337,99 +511,242 @@ const sampleOutput = `{
     const runMinify = () => {
       try {
         const result = minifyJsonText(input.value, sortKeys.checked);
-        currentOutput = result.output;
-        output.textContent = result.output;
-        input.removeAttribute('aria-invalid');
-        downloadButton.disabled = false;
-        updateStats(result.value, result.output);
-        renderTree(result.value);
+        renderOutput(result.value, result.output, 'Minified output ready.');
+        clearErrorLine();
         setStatus(inputStatus, 'Valid JSON · minified locally.', 'success');
-        setStatus(outputStatus, 'Minified output ready.', 'success');
       } catch (error) {
         showInvalid(error);
       }
     };
 
+    const runRepair = () => {
+      const result = repairJsonText(input.value);
+      if (!result.changes.length) {
+        setStatus(inputStatus, 'No safe repairs detected. Nothing changed.', 'info');
+        return;
+      }
+      try {
+        JSON.parse(result.output);
+        previousInput = input.value;
+        input.value = result.output;
+        syncLineNumbers();
+        const formatted = formatJsonText(input.value, indentSize.value === 'tab' ? 'tab' : Number(indentSize.value), sortKeys.checked);
+        renderOutput(formatted.value, formatted.output, 'Repaired and formatted locally.');
+        clearErrorLine();
+        setStatus(inputStatus, `Repaired locally · ${result.changes.join(' · ')}`, 'success');
+        undoRepairButton.hidden = false;
+        undoRepairButton.disabled = false;
+      } catch (error) {
+        showInvalid(error);
+      }
+    };
+
+    const undoRepair = () => {
+      if (!previousInput) return;
+      input.value = previousInput;
+      previousInput = '';
+      syncLineNumbers();
+      validate();
+      undoRepairButton.hidden = true;
+      setStatus(inputStatus, 'Repair undone · original input restored.', 'info');
+    };
+
     const loadSample = () => {
-      input.value = `{
-  "project": "json-lens",
-  "active": true,
-  "contributors": ["Mira", "Dev"],
-  "release": {
-    "version": 1,
-    "channels": ["stable", "preview"]
-  },
-  "limits": null
-}`;
+      input.value = sampleJson;
+      fileNote.textContent = 'sample document loaded';
+      previousInput = '';
+      undoRepairButton.hidden = true;
+      syncLineNumbers();
       runFormat();
       input.focus();
     };
 
     const clearDocument = () => {
       input.value = '';
-      output.textContent = '';
+      output.replaceChildren();
       treeOutput.replaceChildren();
       currentOutput = '';
+      previousInput = '';
       downloadButton.disabled = true;
       clearStats();
-      input.removeAttribute('aria-invalid');
+      clearErrorLine();
+      syncLineNumbers();
+      treeResultCount.textContent = 'empty';
       setStatus(inputStatus, 'Empty document · add JSON to begin.', 'info');
       setStatus(outputStatus, 'Waiting for a document.', 'info');
+      undoRepairButton.hidden = true;
       input.focus();
     };
 
-    input.addEventListener('input', validate);
+    const readFile = async (file: File) => {
+      input.value = await file.text();
+      fileNote.textContent = `${file.name} loaded locally`;
+      touched = true;
+      syncLineNumbers();
+      runFormat();
+    };
+
+    const setMode = (mode: 'format' | 'compare') => {
+      const isCompare = mode === 'compare';
+      formatModeButton.classList.toggle('is-active', !isCompare);
+      compareModeButton.classList.toggle('is-active', isCompare);
+      formatModeButton.setAttribute('aria-selected', String(!isCompare));
+      compareModeButton.setAttribute('aria-selected', String(isCompare));
+      formatPanel.hidden = isCompare;
+      comparePanel.hidden = !isCompare;
+      comparePanel.setAttribute('aria-hidden', String(!isCompare));
+      if (isCompare) compareLeft.focus();
+    };
+
+    const diffValue = (value: JsonValue | undefined) => {
+      if (value === undefined) return '—';
+      const text = JSON.stringify(value);
+      return text.length > 220 ? `${text.slice(0, 217)}…` : text;
+    };
+
+    const renderDiff = (diffs: JsonDiff[]) => {
+      compareResults.replaceChildren();
+      currentDiffText = diffs.map((diff) => `${diff.kind.toUpperCase()} ${diff.path}\n  before: ${diffValue(diff.left)}\n  after:  ${diffValue(diff.right)}`).join('\n\n');
+      copyDiffButton.disabled = !diffs.length;
+      if (!diffs.length) {
+        const empty = document.createElement('p');
+        empty.className = 'compare-empty compare-empty--match';
+        empty.textContent = 'The documents match exactly.';
+        compareResults.append(empty);
+        return;
+      }
+      const heading = document.createElement('div');
+      heading.className = 'compare-results__heading';
+      heading.textContent = `${diffs.length.toLocaleString()} difference${diffs.length === 1 ? '' : 's'}`;
+      compareResults.append(heading);
+      diffs.slice(0, 500).forEach((diff) => {
+        const row = document.createElement('div');
+        row.className = 'diff-row';
+        row.dataset.kind = diff.kind;
+        const path = document.createElement('code');
+        path.className = 'diff-row__path';
+        path.textContent = diff.path;
+        const kind = document.createElement('span');
+        kind.className = 'diff-row__kind';
+        kind.textContent = diff.kind;
+        const before = document.createElement('span');
+        before.className = 'diff-row__value';
+        before.textContent = diffValue(diff.left);
+        const after = document.createElement('span');
+        after.className = 'diff-row__value';
+        after.textContent = diffValue(diff.right);
+        row.append(path, kind, before, after);
+        compareResults.append(row);
+      });
+      if (diffs.length > 500) {
+        const cap = document.createElement('p');
+        cap.className = 'compare-cap';
+        cap.textContent = 'Showing the first 500 differences.';
+        compareResults.append(cap);
+      }
+    };
+
+    const runCompare = () => {
+      try {
+        const result = compareJsonText(compareLeft.value, compareRight.value);
+        renderDiff(result.diffs);
+        setStatus(compareStatus, result.diffs.length ? `${result.diffs.length.toLocaleString()} structural difference${result.diffs.length === 1 ? '' : 's'} found.` : 'No structural differences found.', result.diffs.length ? 'warning' : 'success');
+      } catch (error) {
+        const field = (() => {
+          try { JSON.parse(compareLeft.value); return compareRight; } catch { return compareLeft; }
+        })();
+        showInvalid(error, field);
+        compareResults.replaceChildren();
+        copyDiffButton.disabled = true;
+      }
+    };
+
+    input.addEventListener('input', () => {
+      syncLineNumbers();
+      clearErrorLine();
+      if (touched) validate();
+      else setStatus(inputStatus, 'Editing locally · format when ready.', 'info');
+    });
+    input.addEventListener('blur', () => { touched = true; validate(); });
+    input.addEventListener('scroll', () => { inputLines.scrollTop = input.scrollTop; });
     input.addEventListener('keydown', (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        runFormat();
+      }
       if (event.key === 'Tab') {
         event.preventDefault();
-        const start = input.selectionStart;
-        const end = input.selectionEnd;
-        input.setRangeText('  ', start, end, 'end');
+        input.setRangeText('  ', input.selectionStart, input.selectionEnd, 'end');
+        syncLineNumbers();
       }
     });
     formatButton.addEventListener('click', runFormat);
     minifyButton.addEventListener('click', runMinify);
+    repairButton.addEventListener('click', runRepair);
+    undoRepairButton.addEventListener('click', undoRepair);
     sampleButton.addEventListener('click', loadSample);
     clearButton.addEventListener('click', clearDocument);
+    expandButton.addEventListener('click', () => setTreeExpanded(true));
+    collapseButton.addEventListener('click', () => setTreeExpanded(false));
     treeSearch.addEventListener('input', () => filterTree(treeSearch.value));
-
+    fileInput.addEventListener('change', () => { const file = fileInput.files?.[0]; if (file) void readFile(file); });
+    inputDropzone.addEventListener('dragover', (event) => { event.preventDefault(); inputDropzone.dataset.dragging = 'true'; });
+    inputDropzone.addEventListener('dragleave', () => { delete inputDropzone.dataset.dragging; });
+    inputDropzone.addEventListener('drop', (event) => {
+      event.preventDefault();
+      delete inputDropzone.dataset.dragging;
+      const file = event.dataTransfer?.files?.[0];
+      if (file) void readFile(file);
+    });
     copyButton.addEventListener('click', async () => {
       if (!currentOutput) return;
       try {
         await navigator.clipboard.writeText(currentOutput);
         const original = copyButton.textContent;
-        copyButton.textContent = 'Copied';
-        setTimeout(() => { copyButton.textContent = original; }, 1800);
+        copyButton.dataset.state = 'success';
+        copyButton.textContent = 'Copied ✓';
+        setTimeout(() => { copyButton.textContent = original; delete copyButton.dataset.state; }, 2500);
       } catch {
         setStatus(outputStatus, 'Clipboard access was blocked by the browser.', 'error');
       }
     });
-
     downloadButton.addEventListener('click', () => {
       if (!currentOutput) return;
       const blob = new Blob([currentOutput], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'formatted.json';
+      link.download = 'json-lens.json';
       link.click();
       URL.revokeObjectURL(url);
     });
-
-    input.addEventListener('dragover', (event) => event.preventDefault());
-    input.addEventListener('drop', async (event) => {
-      event.preventDefault();
-      const file = event.dataTransfer?.files?.[0];
-      if (!file) return;
-      input.value = await file.text();
-      runFormat();
+    formatModeButton.addEventListener('click', () => setMode('format'));
+    compareModeButton.addEventListener('click', () => setMode('compare'));
+    runCompareButton.addEventListener('click', runCompare);
+    useCurrentInputButton.addEventListener('click', () => {
+      compareLeft.value = input.value;
+      setStatus(compareStatus, 'Current input copied into Before.', 'info');
+      compareLeft.focus();
+    });
+    copyDiffButton.addEventListener('click', async () => {
+      if (!currentDiffText) return;
+      try {
+        await navigator.clipboard.writeText(currentDiffText);
+        const original = copyDiffButton.textContent;
+        copyDiffButton.dataset.state = 'success';
+        copyDiffButton.textContent = 'Copied ✓';
+        setTimeout(() => { copyDiffButton.textContent = original; delete copyDiffButton.dataset.state; }, 2500);
+      } catch {
+        setStatus(compareStatus, 'Clipboard access was blocked by the browser.', 'error');
+      }
     });
 
+    syncLineNumbers();
     downloadButton.disabled = false;
     try {
       const result = formatJsonText(input.value, 2, false);
       currentOutput = result.output;
-      output.textContent = result.output;
+      output.innerHTML = highlightJson(result.output);
       updateStats(result.value, result.output);
       renderTree(result.value);
       setStatus(inputStatus, 'Valid JSON · ready to format.', 'success');

@@ -16,13 +16,18 @@ const schema = {
   url: siteUrl.toString(),
   description,
   applicationCategory: 'DeveloperApplication',
+  applicationSubCategory: 'JSON formatter and validator',
   operatingSystem: 'Any',
   browserRequirements: 'Requires JavaScript',
+  featureList: 'Format JSON, validate JSON, repair common JSON syntax, compare JSON, inspect JSON trees',
 };
 ---
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#0b1712" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="manifest" href="/manifest.webmanifest" />
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />

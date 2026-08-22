@@ -20,6 +20,26 @@ export interface JsonErrorLocation {
   message: string;
 }
 
+export interface JsonRepairResult {
+  output: string;
+  changes: string[];
+}
+
+export type JsonDiffKind = 'added' | 'removed' | 'changed';
+
+export interface JsonDiff {
+  path: string;
+  kind: JsonDiffKind;
+  left?: JsonValue;
+  right?: JsonValue;
+}
+
+export interface JsonCompareResult {
+  leftValue: JsonValue;
+  rightValue: JsonValue;
+  diffs: JsonDiff[];
+}
+
 function isRecord(value: JsonValue): value is { [key: string]: JsonValue } {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -49,6 +69,150 @@ export function minifyJsonText(input: string, sortKeys = false): JsonFormatResul
   const parsed = JSON.parse(input) as JsonValue;
   const value = sortKeys ? sortJsonKeys(parsed) : parsed;
   return { value, output: JSON.stringify(value) };
+}
+
+function stripComments(input: string): { output: string; count: number } {
+  let output = '';
+  let count = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    const next = input[index + 1];
+
+    if (inString) {
+      output += char;
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      output += char;
+      continue;
+    }
+
+    if (char === '/' && next === '/') {
+      count += 1;
+      index += 2;
+      while (index < input.length && input[index] !== '\n' && input[index] !== '\r') index += 1;
+      if (index < input.length) output += input[index];
+      continue;
+    }
+
+    if (char === '/' && next === '*') {
+      count += 1;
+      index += 2;
+      while (index < input.length && !(input[index] === '*' && input[index + 1] === '/')) index += 1;
+      index += 1;
+      output += ' ';
+      continue;
+    }
+
+    output += char;
+  }
+
+  return { output, count };
+}
+
+function stripTrailingCommas(input: string): { output: string; count: number } {
+  let output = '';
+  let count = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    if (inString) {
+      output += char;
+      if (escaped) escaped = false;
+      else if (char === '\\') escaped = true;
+      else if (char === '"') inString = false;
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      output += char;
+      continue;
+    }
+
+    if (char === ',') {
+      let lookahead = index + 1;
+      while (/\s/.test(input[lookahead] ?? '')) lookahead += 1;
+      if (input[lookahead] === '}' || input[lookahead] === ']') {
+        count += 1;
+        continue;
+      }
+    }
+
+    output += char;
+  }
+
+  return { output, count };
+}
+
+export function repairJsonText(input: string): JsonRepairResult {
+  const changes: string[] = [];
+  let output = input;
+
+  if (output.charCodeAt(0) === 0xfeff) {
+    output = output.slice(1);
+    changes.push('Removed a byte-order mark');
+  }
+
+  const comments = stripComments(output);
+  output = comments.output;
+  if (comments.count) changes.push(`Removed ${comments.count} comment${comments.count === 1 ? '' : 's'}`);
+
+  const trailing = stripTrailingCommas(output);
+  output = trailing.output;
+  if (trailing.count) changes.push(`Removed ${trailing.count} trailing comma${trailing.count === 1 ? '' : 's'}`);
+
+  return { output, changes };
+}
+
+function isComparableRecord(value: JsonValue | undefined): value is { [key: string]: JsonValue } {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function compareValues(left: JsonValue | undefined, right: JsonValue | undefined, path: string, diffs: JsonDiff[]): void {
+  if (left === undefined && right !== undefined) {
+    diffs.push({ path, kind: 'added', right });
+    return;
+  }
+  if (left !== undefined && right === undefined) {
+    diffs.push({ path, kind: 'removed', left });
+    return;
+  }
+  if (left === undefined || right === undefined) return;
+
+  if (Array.isArray(left) && Array.isArray(right)) {
+    const length = Math.max(left.length, right.length);
+    for (let index = 0; index < length; index += 1) compareValues(left[index], right[index], `${path}[${index}]`, diffs);
+    return;
+  }
+
+  if (isComparableRecord(left) && isComparableRecord(right)) {
+    const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
+    [...keys].sort((a, b) => a.localeCompare(b)).forEach((key) => {
+      compareValues(left[key], right[key], `${path}[${JSON.stringify(key)}]`, diffs);
+    });
+    return;
+  }
+
+  if (JSON.stringify(left) !== JSON.stringify(right)) diffs.push({ path, kind: 'changed', left, right });
+}
+
+export function compareJsonText(leftInput: string, rightInput: string): JsonCompareResult {
+  const leftValue = JSON.parse(leftInput) as JsonValue;
+  const rightValue = JSON.parse(rightInput) as JsonValue;
+  const diffs: JsonDiff[] = [];
+  compareValues(leftValue, rightValue, '$', diffs);
+  return { leftValue, rightValue, diffs };
 }
 
 function measureDepth(value: JsonValue, current = 0, root = true): number {

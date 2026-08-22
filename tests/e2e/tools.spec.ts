@@ -4,7 +4,7 @@ test.describe('JSON Lens', () => {
   test('formats the sample and renders document structure', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/JSON Lens/);
-    await expect(page.getByRole('heading', { name: /Make JSON readable/ })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /See the structure/ })).toBeVisible();
     await page.getByRole('button', { name: 'Format JSON' }).click();
     await expect(page.locator('#input-status')).toContainText('Valid JSON');
     await expect(page.locator('#output-status')).toContainText('Formatted output ready');
@@ -13,25 +13,58 @@ test.describe('JSON Lens', () => {
     await expect(page.locator('#tree-output > .tree-node')).toHaveCount(1);
   });
 
-  test('explains invalid JSON with a line and column', async ({ page }) => {
+  test('explains invalid JSON with a line, column, and highlighted row', async ({ page }) => {
     await page.goto('/');
     await page.locator('#json-input').fill('{\n  "broken": true,\n}');
     await page.getByRole('button', { name: 'Format JSON' }).click();
     await expect(page.locator('#input-status')).toContainText('Invalid JSON');
     await expect(page.locator('#input-status')).toContainText('line 3');
     await expect(page.locator('#json-input')).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.locator('#input-lines .is-error')).toHaveAttribute('data-line', '3');
   });
 
-  test('minifies output and filters the tree', async ({ page }) => {
+  test('repairs safe syntax issues and keeps an undo path', async ({ page }) => {
     await page.goto('/');
+    await page.locator('#json-input').fill('{\n  "name": "demo", // comment\n  "items": [1, 2,],\n}');
+    await page.getByRole('button', { name: 'Repair safe issues' }).click();
+    await expect(page.locator('#input-status')).toContainText('Repaired locally');
+    await expect(page.locator('#undo-repair')).toBeVisible();
+    const repaired = await page.locator('#json-output').textContent();
+    expect(JSON.parse(repaired ?? '')).toEqual({ name: 'demo', items: [1, 2] });
+    await page.getByRole('button', { name: 'Undo repair' }).click();
+    await expect(page.locator('#input-status')).toContainText('Repair undone');
+    await expect(page.locator('#json-input')).toHaveValue(/\/\/ comment/);
+  });
+
+  test('loads a local file, minifies output, and filters the tree', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#json-file').setInputFiles({
+      name: 'payload.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from('{"service":{"name":"edge"},"contributors":["Mira"]}'),
+    });
+    await expect(page.locator('#file-note')).toContainText('payload.json loaded locally');
+    await expect(page.locator('#output-status')).toContainText('Formatted output ready');
     await page.getByRole('button', { name: 'Minify' }).click();
     const minified = await page.locator('#json-output').textContent();
     expect(minified).not.toContain('\n');
     await page.locator('#tree-search').fill('contributors');
     await expect(page.locator('#tree-output')).toContainText('contributors');
+    await expect(page.locator('#tree-result-count')).toContainText('match');
   });
 
-  test('keeps the focused routes and metadata available', async ({ page }) => {
+  test('compares parsed documents and exposes a copyable diff', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('tab', { name: 'Compare JSON' }).click();
+    await expect(page.locator('#compare-panel')).toBeVisible();
+    await page.getByRole('button', { name: 'Compare documents' }).click();
+    await expect(page.locator('#compare-status')).toContainText('structural difference');
+    await expect(page.locator('#compare-results .diff-row')).not.toHaveCount(0);
+    await expect(page.locator('#compare-results')).toContainText('$["active"]');
+    await expect(page.locator('#copy-diff')).toBeEnabled();
+  });
+
+  test('keeps the focused routes, metadata, and install assets available', async ({ page }) => {
     for (const route of ['/', '/research/', '/about/', '/robots.txt', '/sitemap-index.xml', '/api/health']) {
       const response = await page.goto(route);
       expect(response?.status(), route).toBe(200);
@@ -42,6 +75,8 @@ test.describe('JSON Lens', () => {
     }
     await page.goto('/');
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /JSON/);
+    await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+    await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/manifest.webmanifest');
     const structuredData = await page.locator('script[type="application/ld+json"]').evaluate((element) => element.textContent ?? '');
     expect(structuredData).toContain('JSON Lens');
   });

@@ -4,7 +4,7 @@
     "macrostructure": "Component Playground",
     "theme": "Terminal",
     "enrichment": "none",
-    "brief": "JSON Lens formatter, validator, and inspector focused on one high-demand developer intent"
+    "brief": "JSON Lens parity pass: local formatter, validator, safe repair, structural compare, file input, and tree inspection"
   },
   {
     "date": "2026-08-22",
