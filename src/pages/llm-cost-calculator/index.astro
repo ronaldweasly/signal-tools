@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIntro from '../../components/ToolIntro.astro';
 import ToolFooterContent from '../../components/ToolFooterContent.astro';
 ---
-<BaseLayout title="LLM Cost Calculator — compare AI API spend" description="Estimate token usage and compare input, output, cached-token, daily, monthly, and yearly LLM API costs in your browser." currentPath="/llm-cost-calculator/">
+<BaseLayout title="LLM Cost Calculator — compare AI API spend" description="Estimate token usage and compare input, output, cached-token, daily, monthly, and yearly LLM API costs in your browser." currentPath="/llm-cost-calculator/" tool="llm">
   <main class="site-main site-shell">
     <ToolIntro eyebrow="AI economics" title="Price the workload, not the hype." lede="Estimate prompt tokens, compare model rates, and see what a recurring workload could cost before it becomes a surprise on the bill." detail="Approximate token counts · verify current provider rates" />
     <div class="tool-grid">
@@ -19,7 +19,7 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
               <div class="field"><label for="cached-tokens">Cached input / request</label><input id="cached-tokens" type="number" min="0" step="1" value="0" /></div>
               <div class="field"><label for="requests-day">Requests / day</label><input id="requests-day" type="number" min="0" step="1" value="500" /></div>
             </div>
-            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Estimate cost <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="use-ai-sample">Use sample workload</button></div>
+            <div class="button-row tool-actions"><button class="button" type="submit">Estimate cost <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="use-ai-sample">Use sample workload</button></div>
           </form>
           <p id="cost-status" class="status" aria-live="polite"></p>
         </div>
@@ -29,14 +29,14 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
         <div class="tool-card__body">
           <p class="result-label">Estimated monthly cost</p><p class="result-value" id="monthly-cost">$0.00</p>
           <div class="result-stack" id="cost-breakdown"></div>
-          <div class="tool-note"><p><strong>Read this as a planning estimate.</strong></p><p>Prices change, providers offer batch/priority tiers, and exact tokenizers differ. Confirm the linked provider rate before committing a budget.</p></div>
+          <div class="tool-note"><p><strong>Read this as a planning estimate.</strong></p><p>Prices change, providers offer batch/priority tiers, and exact tokenizers differ. Confirm the linked provider rate before committing a budget.</p><p class="source-links"><a href="https://developers.openai.com/api/docs/models" target="_blank" rel="noreferrer">OpenAI</a> · <a href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noreferrer">Anthropic</a> · <a href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noreferrer">Google</a></p></div>
           <button class="button secondary" type="button" id="copy-cost">Copy estimate</button>
         </div>
       </aside>
     </div>
     <section class="section" aria-labelledby="compare-title">
       <div class="section-head"><div><p class="eyebrow">Same workload</p><h2 id="compare-title">Compare the scenario across models.</h2></div><p id="compare-caption">The rows below use the same token and request profile, so the comparison is directional rather than a benchmark.</p></div>
-      <div class="tool-card"><div class="tool-card__body" style="overflow-x:auto"><table class="spec-table"><thead><tr><th>Provider</th><th>Model</th><th>Per request</th><th>Per month</th></tr></thead><tbody id="comparison-rows"></tbody></table></div></div>
+      <div class="tool-card"><div class="tool-card__body table-wrap"><table class="spec-table"><thead><tr><th>Provider</th><th>Model</th><th>Per request</th><th>Per month</th></tr></thead><tbody id="comparison-rows"></tbody></table></div></div>
     </section>
     <section class="section" aria-labelledby="cost-faq-title"><div class="section-head"><div><p class="eyebrow">Notes</p><h2 id="cost-faq-title">Token math is simple. Pricing context is not.</h2></div><p>Separate input, output, and cached input tokens so the model comparison remains legible when caching or batch discounts enter the conversation.</p></div><div class="faq-list"><details open><summary>How is the estimate calculated?</summary><p>Input tokens are multiplied by the model’s input rate, output tokens by the output rate, and cached tokens by the cached-input rate. The result is scaled by requests per day and 30 days.</p></details><details><summary>Is the token count exact?</summary><p>No. The browser estimate uses a transparent character heuristic. Exact tokenization varies by model and tokenizer, so use the result for planning and verify with the provider SDK before launch.</p></details><details><summary>Does the tool send my prompt to a server?</summary><p>No. The prompt is processed in your browser and is not required to calculate a scenario.</p></details></div></section>
     <ToolFooterContent title="Make the cost visible early." copy="A small scenario model is enough to catch an order-of-magnitude surprise before it reaches production." href="/cron-generator/" label="Next: schedule a recurring job" />

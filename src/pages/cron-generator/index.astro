@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIntro from '../../components/ToolIntro.astro';
 import ToolFooterContent from '../../components/ToolFooterContent.astro';
 ---
-<BaseLayout title="Cron Expression Generator — build and verify schedules" description="Generate readable cron expressions, parse existing schedules, and preview the next three runs with timezone context." currentPath="/cron-generator/">
+<BaseLayout title="Cron Expression Generator — build and verify schedules" description="Generate readable cron expressions, parse existing schedules, and preview the next three runs with timezone context." currentPath="/cron-generator/" tool="cron">
   <main class="site-main site-shell">
     <ToolIntro eyebrow="Scheduling" title="Make recurring work readable." lede="Build a cron schedule from familiar fields, parse an existing expression, and verify what will run next instead of guessing." detail="5-field cron · timezone-aware preview" />
     <div class="tool-grid">
@@ -20,7 +20,7 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
               <div class="field"><label for="weekday">Day of week</label><input id="weekday" value="1-5" spellcheck="false" /></div>
               <div class="field"><label for="timezone">Timezone</label><select id="timezone"><option value="UTC">UTC</option><option value="America/New_York">America/New_York</option><option value="Europe/London">Europe/London</option><option value="Asia/Kolkata">Asia/Kolkata</option><option value="Asia/Tokyo">Asia/Tokyo</option></select></div>
             </div>
-            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Check schedule <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="preset-hourly">Hourly</button><button class="button secondary" type="button" id="preset-weekday">Weekdays</button></div>
+            <div class="button-row tool-actions"><button class="button" type="submit">Check schedule <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="preset-hourly">Hourly</button><button class="button secondary" type="button" id="preset-weekday">Weekdays</button></div>
           </form>
           <p id="cron-status" class="status" aria-live="polite"></p>
         </div>

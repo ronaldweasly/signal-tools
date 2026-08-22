@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIntro from '../../components/ToolIntro.astro';
 import ToolFooterContent from '../../components/ToolFooterContent.astro';
 ---
-<BaseLayout title="UTM Builder & QA — clean campaign links" description="Build consistent UTM campaign URLs, validate existing links, and export clean attribution data in your browser." currentPath="/utm-builder/">
+<BaseLayout title="UTM Builder & QA — clean campaign links" description="Build consistent UTM campaign URLs, validate existing links, and export clean attribution data in your browser." currentPath="/utm-builder/" tool="utm">
   <main class="site-main site-shell">
     <ToolIntro eyebrow="Campaign QA" title="Build links you can trust." lede="Create consistent UTM parameters, validate an existing URL, and keep campaign naming clean before it reaches analytics." detail="No sign-up · browser-first" />
     <div class="tool-grid">
@@ -19,7 +19,7 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
               <div class="field"><label for="utm-term">Term <span class="muted">optional</span></label><input id="utm-term" name="utm-term" placeholder="keyword" /></div>
               <div class="field"><label for="utm-content">Content <span class="muted">optional</span></label><input id="utm-content" name="utm-content" placeholder="hero_cta" /></div>
             </div>
-            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Build URL <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="load-sample">Use sample</button><button class="button secondary" type="button" id="validate-url">Validate existing URL</button></div>
+            <div class="button-row tool-actions"><button class="button" type="submit">Build URL <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="load-sample">Use sample</button><button class="button secondary" type="button" id="validate-url">Validate existing URL</button></div>
           </form>
           <p id="utm-status" class="status" aria-live="polite"></p>
         </div>

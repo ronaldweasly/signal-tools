@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIntro from '../../components/ToolIntro.astro';
 import ToolFooterContent from '../../components/ToolFooterContent.astro';
 ---
-<BaseLayout title="Favicon Generator — create a clean icon set" description="Create a browser-first favicon SVG, preview the icon at common sizes, and copy the HTML tags needed to install it." currentPath="/favicon-generator/">
+<BaseLayout title="Favicon Generator — create a clean icon set" description="Create a browser-first favicon SVG, preview the icon at common sizes, and copy the HTML tags needed to install it." currentPath="/favicon-generator/" tool="favicon">
   <main class="site-main site-shell">
     <ToolIntro eyebrow="Brand surface" title="Make the smallest mark work harder." lede="Create a crisp text-based favicon, preview it at common browser sizes, and export the SVG plus installation snippet without uploading the design." detail="Browser-first · SVG + PNG export" />
     <div class="tool-grid">
@@ -17,7 +17,7 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
               <div class="field"><label for="icon-foreground">Foreground</label><input id="icon-foreground" type="color" value="#F5F7F8" /></div>
               <div class="field full"><label for="icon-shape">Shape</label><select id="icon-shape"><option value="rounded">Rounded square</option><option value="square">Square</option><option value="circle">Circle</option></select></div>
             </div>
-            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Update preview <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="favicon-sample">Use sample</button></div>
+            <div class="button-row tool-actions"><button class="button" type="submit">Update preview <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="favicon-sample">Use sample</button></div>
           </form>
           <p id="favicon-status" class="status" aria-live="polite"></p>
         </div>

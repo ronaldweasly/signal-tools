@@ -10,16 +10,17 @@ interface Props {
   canonicalPath?: string;
   currentPath?: string;
   noindex?: boolean;
+  tool?: string;
 }
 
-const { title, description, canonicalPath = Astro.url.pathname, currentPath = Astro.url.pathname, noindex = false } = Astro.props;
+const { title, description, canonicalPath = Astro.url.pathname, currentPath = Astro.url.pathname, noindex = false, tool } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
   </head>
-  <body>
+  <body data-tool={tool}>
     <SiteNav currentPath={currentPath} />
     <slot />
     <SiteFooter />

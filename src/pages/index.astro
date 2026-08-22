@@ -2,11 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const tools = [
-  { href: '/utm-builder/', eyebrow: 'Campaign QA', title: 'UTM Builder', copy: 'Build clean campaign links, catch attribution mistakes, and export a tidy handoff.', intent: 'marketers · analysts' },
-  { href: '/llm-cost-calculator/', eyebrow: 'AI economics', title: 'LLM Cost Calculator', copy: 'Estimate token usage, compare model pricing, and pressure-test a workload before launch.', intent: 'AI builders · founders' },
-  { href: '/cron-generator/', eyebrow: 'Scheduling', title: 'Cron Generator', copy: 'Turn a recurring schedule into a readable expression and verify the next three runs.', intent: 'developers · ops' },
-  { href: '/schema-generator/', eyebrow: 'Search structure', title: 'Schema Generator', copy: 'Generate paste-ready JSON-LD for common Schema.org types without guessing the shape.', intent: 'SEOs · publishers' },
-  { href: '/favicon-generator/', eyebrow: 'Brand surface', title: 'Favicon Generator', copy: 'Create a small, sharp icon set and preview how it behaves across browser surfaces.', intent: 'designers · developers' },
+  { key: 'utm', href: '/utm-builder/', eyebrow: 'Campaign QA', title: 'UTM Builder', copy: 'Build clean campaign links, catch attribution mistakes, and export a tidy handoff.', intent: 'marketers · analysts' },
+  { key: 'llm', href: '/llm-cost-calculator/', eyebrow: 'AI economics', title: 'LLM Cost Calculator', copy: 'Estimate token usage, compare model pricing, and pressure-test a workload before launch.', intent: 'AI builders · founders' },
+  { key: 'cron', href: '/cron-generator/', eyebrow: 'Scheduling', title: 'Cron Generator', copy: 'Turn a recurring schedule into a readable expression and verify the next three runs.', intent: 'developers · ops' },
+  { key: 'schema', href: '/schema-generator/', eyebrow: 'Search structure', title: 'Schema Generator', copy: 'Generate paste-ready JSON-LD for common Schema.org types without guessing the shape.', intent: 'SEOs · publishers' },
+  { key: 'favicon', href: '/favicon-generator/', eyebrow: 'Brand surface', title: 'Favicon Generator', copy: 'Create a small, sharp icon set and preview how it behaves across browser surfaces.', intent: 'designers · developers' },
 ];
 ---
 <BaseLayout title="Signal Tools — focused utilities for technical work" description="Private, browser-first utilities for campaign tracking, AI costs, cron schedules, structured data, and favicons.">
@@ -28,9 +28,9 @@ const tools = [
         <p>Each tool is server-rendered for search and runs the actual calculation in your browser. No sign-up, no prompt upload, no opaque score.</p>
       </div>
       <div class="directory-grid">
-        {tools.map((tool) => (
-          <a class="directory-card" href={tool.href}>
-            <div><p class="eyebrow">{tool.eyebrow}</p><h2>{tool.title}</h2><p>{tool.copy}</p></div>
+        {tools.map((tool, index) => (
+          <a class="directory-card" data-tool={tool.key} href={tool.href}>
+            <div class="directory-card__top"><div><p class="eyebrow">{tool.eyebrow}</p><h2>{tool.title}</h2><p>{tool.copy}</p></div><span class="directory-card__index">0{index + 1}</span></div>
             <div class="directory-card__footer"><span>{tool.intent}</span><span aria-hidden="true">↗</span></div>
           </a>
         ))}
@@ -42,14 +42,14 @@ const tools = [
         <div><p class="eyebrow">Method</p><h2 id="method-title">Useful before impressive.</h2></div>
         <p>We prefer visible formulas, current-source notes, and reversible actions. When a number is an estimate, the interface says so.</p>
       </div>
-      <table class="spec-table">
+      <div class="table-wrap"><table class="spec-table">
         <thead><tr><th>Principle</th><th>What it means here</th><th>Default</th></tr></thead>
         <tbody>
           <tr><td>Privacy</td><td>Browser-first transformations for text, links, schedules, JSON, and icons.</td><td>Local</td></tr>
           <tr><td>Clarity</td><td>Results show the inputs and method needed to recreate them.</td><td>Visible</td></tr>
           <tr><td>Search</td><td>Explanatory copy and FAQs are part of every tool page.</td><td>Indexable</td></tr>
         </tbody>
-      </table>
+      </table></div>
     </section>
   </main>
 </BaseLayout>

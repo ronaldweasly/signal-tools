@@ -14,6 +14,6 @@ const { eyebrow, title, lede, detail } = Astro.props;
   </div>
   <div class="page-intro__aside">
     <p class="page-intro__lede">{lede}</p>
-    {detail && <p class="status mono">{detail}</p>}
+    {detail && <p class="status mono" aria-label="Tool conditions">{detail}</p>}
   </div>
 </header>

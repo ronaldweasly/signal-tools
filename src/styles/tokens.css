@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V5 · genre: modern-minimal · macrostructure: Workbench · theme: Quiet · enrichment: none · nav: N5 · footer: Ft2 · contrast: pass (46–50) · slop: pass (51–55) · honest: pass (56) · chrome: pass (57) · tokens: pass (58) · responsive: pass (59) · icons: pass (60) · mobile: pass (36, 59, 61–69) */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: modern-minimal · macrostructure: Workbench · theme: Quiet · enrichment: none · nav: N5 · footer: Ft2 · contrast: pass (46–50) · slop: pass (51–55) · honest: pass (56) · chrome: pass (57) · tokens: pass (58) · responsive: pass (59) · icons: pass (60) · mobile: pass (36, 59, 61–69) */
 :root {
   --color-paper: oklch(98% 0.006 230);
   --color-paper-2: oklch(95% 0.009 230);
@@ -10,6 +10,12 @@
   --color-muted: oklch(48% 0.012 230);
   --color-accent: oklch(52% 0.15 220);
   --color-accent-soft: oklch(92% 0.04 220);
+  --color-accent-ink: var(--color-paper);
+  --color-tool-campaign: oklch(52% 0.15 220);
+  --color-tool-ai: oklch(54% 0.14 285);
+  --color-tool-schedule: oklch(49% 0.13 155);
+  --color-tool-schema: oklch(55% 0.14 38);
+  --color-tool-brand: oklch(56% 0.14 78);
   --color-success: oklch(44% 0.12 155);
   --color-success-soft: oklch(92% 0.04 155);
   --color-danger: oklch(48% 0.15 25);
@@ -28,7 +34,7 @@
   --text-xl: 1.5rem;
   --text-2xl: 2rem;
   --text-3xl: clamp(2.4rem, 5vw, 4.5rem);
-  --text-display: clamp(2.7rem, 7vw, 6.6rem);
+  --text-display: clamp(2.75rem, 6vw, 5.6rem);
   --line-tight: 1.08;
   --line-body: 1.58;
 

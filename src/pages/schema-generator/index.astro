@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ToolIntro from '../../components/ToolIntro.astro';
 import ToolFooterContent from '../../components/ToolFooterContent.astro';
 ---
-<BaseLayout title="JSON-LD Schema Generator — paste-ready structured data" description="Generate JSON-LD structured data for Article, FAQPage, Organization, Product, Event, BreadcrumbList, and LocalBusiness pages." currentPath="/schema-generator/">
+<BaseLayout title="JSON-LD Schema Generator — paste-ready structured data" description="Generate JSON-LD structured data for Article, FAQPage, Organization, Product, Event, BreadcrumbList, and LocalBusiness pages." currentPath="/schema-generator/" tool="schema">
   <main class="site-main site-shell">
     <ToolIntro eyebrow="Search structure" title="Make the page legible to machines." lede="Build valid-looking, paste-ready JSON-LD for common Schema.org types with a form that keeps the required fields visible." detail="No rich-result guarantee · validate before publishing" />
     <div class="tool-grid">
@@ -13,7 +13,7 @@ import ToolFooterContent from '../../components/ToolFooterContent.astro';
           <form id="schema-form">
             <div class="field"><label for="schema-type">Choose a type</label><select id="schema-type"><option value="Article">Article</option><option value="FAQPage">FAQ page</option><option value="Organization">Organization</option><option value="Product">Product</option><option value="Event">Event</option><option value="BreadcrumbList">Breadcrumbs</option><option value="LocalBusiness">Local business</option></select></div>
             <div id="schema-fields" class="field-grid" style="margin-top: var(--space-lg)"></div>
-            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Generate JSON-LD <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="schema-sample">Load sample</button></div>
+            <div class="button-row tool-actions"><button class="button" type="submit">Generate JSON-LD <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="schema-sample">Load sample</button></div>
           </form>
           <p id="schema-status" class="status" aria-live="polite"></p>
         </div>
