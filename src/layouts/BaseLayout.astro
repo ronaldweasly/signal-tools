@@ -1,0 +1,27 @@
+---
+import '../styles/global.css';
+import SeoHead from '../components/SeoHead.astro';
+import SiteNav from '../components/SiteNav.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath?: string;
+  currentPath?: string;
+  noindex?: boolean;
+}
+
+const { title, description, canonicalPath = Astro.url.pathname, currentPath = Astro.url.pathname, noindex = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <SeoHead title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
+  </head>
+  <body>
+    <SiteNav currentPath={currentPath} />
+    <slot />
+    <SiteFooter />
+  </body>
+</html>

@@ -1,0 +1,10 @@
+name = "signal-tools"
+compatibility_date = "2026-08-22"
+main = "@astrojs/cloudflare/entrypoints/server"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[observability]
+enabled = true

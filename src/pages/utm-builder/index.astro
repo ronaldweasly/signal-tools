@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ToolIntro from '../../components/ToolIntro.astro';
+import ToolFooterContent from '../../components/ToolFooterContent.astro';
+---
+<BaseLayout title="UTM Builder & QA — clean campaign links" description="Build consistent UTM campaign URLs, validate existing links, and export clean attribution data in your browser." currentPath="/utm-builder/">
+  <main class="site-main site-shell">
+    <ToolIntro eyebrow="Campaign QA" title="Build links you can trust." lede="Create consistent UTM parameters, validate an existing URL, and keep campaign naming clean before it reaches analytics." detail="No sign-up · browser-first" />
+    <div class="tool-grid">
+      <section class="tool-card" aria-labelledby="utm-form-title">
+        <div class="tool-card__head"><div><p class="eyebrow">Builder</p><h2 id="utm-form-title">Campaign URL</h2></div><span class="mono muted">utm_01</span></div>
+        <div class="tool-card__body">
+          <form id="utm-form">
+            <div class="field-grid">
+              <div class="field full"><label for="base-url">Destination URL</label><input id="base-url" name="base-url" type="url" value="https://example.com/launch" placeholder="https://example.com/page" required /><p class="field__hint">Existing query parameters are preserved.</p><p class="field__error">Enter a complete URL with https://.</p></div>
+              <div class="field"><label for="utm-source">Source <span class="muted">required</span></label><input id="utm-source" name="utm-source" value="newsletter" placeholder="newsletter" required /><p class="field__error">Add a source.</p></div>
+              <div class="field"><label for="utm-medium">Medium <span class="muted">required</span></label><input id="utm-medium" name="utm-medium" value="email" placeholder="email" required /><p class="field__error">Add a medium.</p></div>
+              <div class="field"><label for="utm-campaign">Campaign <span class="muted">required</span></label><input id="utm-campaign" name="utm-campaign" value="spring_launch" placeholder="spring_launch" required /><p class="field__error">Add a campaign.</p></div>
+              <div class="field"><label for="utm-term">Term <span class="muted">optional</span></label><input id="utm-term" name="utm-term" placeholder="keyword" /></div>
+              <div class="field"><label for="utm-content">Content <span class="muted">optional</span></label><input id="utm-content" name="utm-content" placeholder="hero_cta" /></div>
+            </div>
+            <div class="button-row" style="margin-top: var(--space-lg)"><button class="button" type="submit">Build URL <span aria-hidden="true">→</span></button><button class="button secondary" type="button" id="load-sample">Use sample</button><button class="button secondary" type="button" id="validate-url">Validate existing URL</button></div>
+          </form>
+          <p id="utm-status" class="status" aria-live="polite"></p>
+        </div>
+      </section>
+      <aside class="tool-card result-panel" aria-labelledby="utm-result-title">
+        <div class="tool-card__head"><div><p class="eyebrow">Output</p><h2 id="utm-result-title">Copy-ready link</h2></div><span class="mono">live</span></div>
+        <div class="tool-card__body">
+          <code class="code-output" id="utm-output">Your tagged URL will appear here.</code>
+          <div class="button-row"><button class="button" type="button" id="copy-url" disabled>Copy URL</button><button class="button secondary" type="button" id="download-csv" disabled>Download CSV</button></div>
+          <div class="tool-note"><p><strong>QA checklist</strong></p><p>Source, medium, and campaign are required. The tool preserves existing query parameters and removes empty optional values.</p></div>
+        </div>
+      </aside>
+    </div>
+    <section class="section" aria-labelledby="utm-faq-title">
+      <div class="section-head"><div><p class="eyebrow">Notes</p><h2 id="utm-faq-title">A tag is only useful when the naming stays consistent.</h2></div><p>Use lowercase names, avoid spaces, and keep the same source/medium vocabulary across campaigns.</p></div>
+      <div class="faq-list"><details open><summary>What does a UTM builder do?</summary><p>It adds campaign parameters to a destination URL so analytics tools can attribute visits to a source, medium, and campaign.</p></details><details><summary>Does this upload my links?</summary><p>No. The builder runs in your browser. The URL is only used by the page while you work with it.</p></details><details><summary>Will it overwrite existing query parameters?</summary><p>No. Existing parameters are kept; only the UTM keys are updated or removed when their fields are empty.</p></details></div>
+    </section>
+    <ToolFooterContent title="Ship cleaner campaign links." copy="When a campaign naming system is part of the workflow, the QA step becomes much easier to repeat." href="/llm-cost-calculator/" label="Next: compare AI costs" />
+  </main>
+</BaseLayout>
+
+<script>
+  import { buildUtmUrl, csvEscape, validateUtmUrl } from '../../lib/utm';
+
+  const form = document.querySelector<HTMLFormElement>('#utm-form');
+  const output = document.querySelector<HTMLElement>('#utm-output');
+  const status = document.querySelector<HTMLElement>('#utm-status');
+  const copyButton = document.querySelector<HTMLButtonElement>('#copy-url');
+  const csvButton = document.querySelector<HTMLButtonElement>('#download-csv');
+  const value = (id: string) => (document.querySelector<HTMLInputElement>(id)?.value ?? '').trim();
+  let currentUrl = '';
+
+  function params() { return { source: value('#utm-source'), medium: value('#utm-medium'), campaign: value('#utm-campaign'), term: value('#utm-term'), content: value('#utm-content') }; }
+  function setStatus(message: string, tone: 'info' | 'success' | 'error' = 'info') { if (status) { status.textContent = message; status.dataset.tone = tone; } }
+  function render() {
+    try {
+      currentUrl = buildUtmUrl(value('#base-url'), params());
+      if (output) output.textContent = currentUrl;
+      if (copyButton) copyButton.disabled = false;
+      if (csvButton) csvButton.disabled = false;
+      setStatus('URL updated. Check the parameters, then copy or export.', 'success');
+    } catch {
+      currentUrl = '';
+      if (output) output.textContent = 'Enter a valid destination URL to build the result.';
+      if (copyButton) copyButton.disabled = true;
+      if (csvButton) csvButton.disabled = true;
+      setStatus('The destination URL needs a protocol, such as https://.', 'error');
+    }
+  }
+
+  form?.addEventListener('submit', (event) => { event.preventDefault(); render(); });
+  form?.addEventListener('input', () => render());
+  document.querySelector<HTMLButtonElement>('#load-sample')?.addEventListener('click', () => {
+    const sample = { '#base-url': 'https://example.com/pricing', '#utm-source': 'linkedin', '#utm-medium': 'social', '#utm-campaign': 'q3_pricing', '#utm-term': '', '#utm-content': 'founder_post' };
+    Object.entries(sample).forEach(([selector, next]) => { const input = document.querySelector<HTMLInputElement>(selector); if (input) input.value = next; });
+    render();
+  });
+  document.querySelector<HTMLButtonElement>('#validate-url')?.addEventListener('click', () => {
+    const result = validateUtmUrl(value('#base-url'));
+    setStatus(result.valid ? 'This URL has the required UTM fields.' : result.issues.join(' '), result.valid ? 'success' : 'error');
+  });
+  copyButton?.addEventListener('click', async () => {
+    if (!currentUrl) return;
+    await navigator.clipboard.writeText(currentUrl);
+    copyButton.textContent = 'Copied';
+    copyButton.dataset.state = 'success';
+    window.setTimeout(() => { if (copyButton) { copyButton.textContent = 'Copy URL'; delete copyButton.dataset.state; } }, 2500);
+  });
+  csvButton?.addEventListener('click', () => {
+    if (!currentUrl) return;
+    const row = ['destination_url', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'].map(csvEscape).join(',');
+    const values = [currentUrl, value('#utm-source'), value('#utm-medium'), value('#utm-campaign'), value('#utm-term'), value('#utm-content')].map(csvEscape).join(',');
+    const blob = new Blob([`${row}\n${values}\n`], { type: 'text/csv;charset=utf-8' });
+    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'utm-campaign.csv'; link.click(); URL.revokeObjectURL(link.href);
+  });
+  render();
+</script>

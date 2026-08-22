@@ -1,0 +1,40 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  noindex?: boolean;
+}
+
+const { title, description, canonicalPath, noindex = false } = Astro.props;
+const siteUrl = Astro.site ?? new URL(Astro.url.origin);
+const canonical = new URL(canonicalPath, siteUrl).toString();
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Signal Tools',
+  url: siteUrl.toString(),
+  description,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteUrl.toString().replace(/\/$/, '')}/?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+---
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content="Signal Tools" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
