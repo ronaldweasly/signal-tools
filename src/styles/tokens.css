@@ -61,6 +61,7 @@
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --banner-height: 4.5rem;
+  --z-skip-link: 100;
   --z-sticky-nav: 20;
   --z-sticky: 10;
 }

@@ -1,4 +1,4 @@
-# Focused Product Research: JSON Formatter + Validator
+## Focused Product Research: JSON Formatter + Validator
 
 Research date: 2026-08-22  
 Market lens: English-language search, US-first where a country is stated, with a browser-first utility that can be used globally.

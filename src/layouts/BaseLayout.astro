@@ -21,6 +21,7 @@ const { title, description, canonicalPath = Astro.url.pathname, currentPath = As
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} noindex={noindex} />
   </head>
   <body data-tool={tool}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <SiteNav currentPath={currentPath} />
     <slot />
     <SiteFooter />

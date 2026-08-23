@@ -259,6 +259,9 @@ export function getJsonErrorLocation(input: string, error: unknown): JsonErrorLo
   const line = before.split('\n').length;
   const lastLine = before.split('\n').at(-1) ?? '';
   const column = lastLine.length + 1;
-  const message = rawMessage.replace(/\s+at position\s+\d+\.?$/i, '').trim();
+  const message = rawMessage
+    .replace(/\s+at position\s+\d+\.?/i, '')
+    .replace(/\s*\(line\s+\d+\s+column\s+\d+\)\s*$/i, '')
+    .trim();
   return { line, column, position, message: message || 'Invalid JSON' };
 }

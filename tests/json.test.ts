@@ -35,6 +35,11 @@ describe('JSON Lens transformations', () => {
     expect(location.message).toContain('Unexpected token }');
   });
 
+  it('removes duplicate parser line and column metadata from the message', () => {
+    const location = getJsonErrorLocation('{', new SyntaxError('Unexpected end of JSON input at position 1 (line 1 column 2)'));
+    expect(location.message).toBe('Unexpected end of JSON input');
+  });
+
   it('measures structural document stats', () => {
     const text = '{\n  "items": [{"id": 1}],\n  "ok": true\n}';
     const value = JSON.parse(text);

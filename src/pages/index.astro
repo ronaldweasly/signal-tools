@@ -41,7 +41,7 @@ const sampleOutput = `{
 }`;
 ---
 <BaseLayout title="JSON Lens — the private JSON workbench" description="Format, validate, safely repair, compare, and inspect JSON locally in your browser. Find syntax errors with readable line and column locations, then copy or download a trustworthy result." currentPath="/" tool="json-lens">
-  <main class="site-main site-shell json-lens-page">
+  <main id="main-content" class="site-main site-shell json-lens-page" tabindex="-1">
     <section class="json-hero" aria-labelledby="page-title">
       <div class="json-hero__copy">
         <p class="hero-kicker"><span class="signal-dot" aria-hidden="true"></span> JSON LENS / LOCAL-FIRST TOOLING</p>
@@ -73,13 +73,13 @@ const sampleOutput = `{
         <p>Use the mode that matches the job. Every transformation is deterministic, local, and visible.</p>
       </div>
 
-      <div class="workspace-modebar" role="tablist" aria-label="JSON workbench modes">
+      <div class="workspace-modebar" role="tablist" aria-label="JSON workbench modes" aria-orientation="horizontal">
         <button class="mode-tab is-active" id="mode-format" type="button" role="tab" aria-selected="true" aria-controls="format-panel">Format &amp; inspect</button>
         <button class="mode-tab" id="mode-compare" type="button" role="tab" aria-selected="false" aria-controls="compare-panel">Compare JSON</button>
         <span class="modebar__meta">local / no upload</span>
       </div>
 
-      <section id="format-panel" class="format-panel" role="tabpanel" aria-labelledby="mode-format">
+      <section id="format-panel" class="format-panel" role="tabpanel" aria-labelledby="mode-format" aria-hidden="false">
         <div class="workspace-bar">
           <div class="workspace-bar__title">JSON LENS <span class="muted">/ editor</span></div>
           <div class="workspace-bar__actions">
@@ -161,7 +161,7 @@ const sampleOutput = `{
         </div>
       </section>
 
-      <section id="compare-panel" class="compare-panel" role="tabpanel" aria-labelledby="mode-compare" hidden aria-hidden="true">
+      <section id="compare-panel" class="compare-panel" role="tabpanel" aria-labelledby="mode-compare" hidden aria-hidden="true" tabindex="-1">
         <div class="compare-heading">
           <div>
             <p class="kicker">Structural diff</p>
@@ -346,6 +346,12 @@ const sampleOutput = `{
       Object.values(stats).forEach((element) => { if (element) element.textContent = '—'; });
     };
 
+    const setTreeControls = (enabled: boolean) => {
+      expandButton.disabled = !enabled;
+      collapseButton.disabled = !enabled;
+      treeSearch.disabled = !enabled;
+    };
+
     const syncLineNumbers = () => {
       const lines = input.value.split('\n').length;
       inputLines.replaceChildren();
@@ -462,11 +468,13 @@ const sampleOutput = `{
       const location = getJsonErrorLocation(field.value, error);
       if (field === input) {
         markErrorLine(location.line);
-        setStatus(inputStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
+        setStatus(inputStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message} · edit the highlighted line or try Repair safe issues.`, 'error');
         setStatus(outputStatus, 'Output kept from the last valid run.', 'warning');
       } else {
-        setStatus(compareStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message}`, 'error');
+        field.setAttribute('aria-invalid', 'true');
+        setStatus(compareStatus, `Invalid JSON · line ${location.line}, column ${location.column} · ${location.message} · edit this document and compare again.`, 'error');
       }
+      field.focus();
     };
 
     const validate = () => {
@@ -497,6 +505,7 @@ const sampleOutput = `{
     };
 
     const runFormat = () => {
+      touched = true;
       try {
         const indent = indentSize.value === 'tab' ? 'tab' : Number(indentSize.value);
         const result = formatJsonText(input.value, indent, sortKeys.checked);
@@ -509,6 +518,7 @@ const sampleOutput = `{
     };
 
     const runMinify = () => {
+      touched = true;
       try {
         const result = minifyJsonText(input.value, sortKeys.checked);
         renderOutput(result.value, result.output, 'Minified output ready.');
@@ -529,6 +539,7 @@ const sampleOutput = `{
         JSON.parse(result.output);
         previousInput = input.value;
         input.value = result.output;
+        touched = true;
         syncLineNumbers();
         const formatted = formatJsonText(input.value, indentSize.value === 'tab' ? 'tab' : Number(indentSize.value), sortKeys.checked);
         renderOutput(formatted.value, formatted.output, 'Repaired and formatted locally.');
@@ -546,15 +557,17 @@ const sampleOutput = `{
       input.value = previousInput;
       previousInput = '';
       syncLineNumbers();
-      validate();
+      const valid = validate();
       undoRepairButton.hidden = true;
-      setStatus(inputStatus, 'Repair undone · original input restored.', 'info');
+      if (valid) setStatus(inputStatus, 'Repair undone · original input restored.', 'info');
+      else setStatus(inputStatus, `Repair undone · original input restored. ${inputStatus.textContent ?? 'Invalid JSON.'}`, 'error');
     };
 
     const loadSample = () => {
       input.value = sampleJson;
       fileNote.textContent = 'sample document loaded';
       previousInput = '';
+      touched = true;
       undoRepairButton.hidden = true;
       syncLineNumbers();
       runFormat();
@@ -567,9 +580,11 @@ const sampleOutput = `{
       treeOutput.replaceChildren();
       currentOutput = '';
       previousInput = '';
+      touched = false;
       downloadButton.disabled = true;
       clearStats();
       clearErrorLine();
+      setTreeControls(false);
       syncLineNumbers();
       treeResultCount.textContent = 'empty';
       setStatus(inputStatus, 'Empty document · add JSON to begin.', 'info');
@@ -579,23 +594,38 @@ const sampleOutput = `{
     };
 
     const readFile = async (file: File) => {
-      input.value = await file.text();
-      fileNote.textContent = `${file.name} loaded locally`;
-      touched = true;
-      syncLineNumbers();
-      runFormat();
+      fileInput.disabled = true;
+      setStatus(inputStatus, `Reading ${file.name} locally…`, 'info');
+      try {
+        input.value = await file.text();
+        fileNote.textContent = `${file.name} loaded locally`;
+        touched = true;
+        syncLineNumbers();
+        runFormat();
+      } catch {
+        setStatus(inputStatus, `Could not read ${file.name}. Choose another local file.`, 'error');
+      } finally {
+        fileInput.disabled = false;
+      }
     };
 
-    const setMode = (mode: 'format' | 'compare') => {
+    const setMode = (mode: 'format' | 'compare', focusPanel = true) => {
       const isCompare = mode === 'compare';
       formatModeButton.classList.toggle('is-active', !isCompare);
       compareModeButton.classList.toggle('is-active', isCompare);
       formatModeButton.setAttribute('aria-selected', String(!isCompare));
       compareModeButton.setAttribute('aria-selected', String(isCompare));
+      formatModeButton.tabIndex = isCompare ? -1 : 0;
+      compareModeButton.tabIndex = isCompare ? 0 : -1;
       formatPanel.hidden = isCompare;
+      formatPanel.setAttribute('aria-hidden', String(isCompare));
       comparePanel.hidden = !isCompare;
       comparePanel.setAttribute('aria-hidden', String(!isCompare));
-      if (isCompare) compareLeft.focus();
+      if (isCompare && focusPanel) {
+        const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        comparePanel.scrollIntoView({ behavior, block: 'start' });
+        compareLeft.focus({ preventScroll: true });
+      }
     };
 
     const diffValue = (value: JsonValue | undefined) => {
@@ -649,6 +679,8 @@ const sampleOutput = `{
     const runCompare = () => {
       try {
         const result = compareJsonText(compareLeft.value, compareRight.value);
+        compareLeft.removeAttribute('aria-invalid');
+        compareRight.removeAttribute('aria-invalid');
         renderDiff(result.diffs);
         setStatus(compareStatus, result.diffs.length ? `${result.diffs.length.toLocaleString()} structural difference${result.diffs.length === 1 ? '' : 's'} found.` : 'No structural differences found.', result.diffs.length ? 'warning' : 'success');
       } catch (error) {
@@ -722,9 +754,20 @@ const sampleOutput = `{
     });
     formatModeButton.addEventListener('click', () => setMode('format'));
     compareModeButton.addEventListener('click', () => setMode('compare'));
+    const modeTabs = [formatModeButton, compareModeButton];
+    modeTabs.forEach((tab, index) => {
+      tab.addEventListener('keydown', (event) => {
+        if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? modeTabs.length - 1 : (index + (event.key === 'ArrowRight' || event.key === 'ArrowDown' ? 1 : -1) + modeTabs.length) % modeTabs.length;
+        modeTabs[nextIndex].focus();
+        setMode(nextIndex === 1 ? 'compare' : 'format', false);
+      });
+    });
     runCompareButton.addEventListener('click', runCompare);
     useCurrentInputButton.addEventListener('click', () => {
       compareLeft.value = input.value;
+      compareLeft.removeAttribute('aria-invalid');
       setStatus(compareStatus, 'Current input copied into Before.', 'info');
       compareLeft.focus();
     });
@@ -742,6 +785,9 @@ const sampleOutput = `{
     });
 
     syncLineNumbers();
+    setTreeControls(true);
+    formatModeButton.tabIndex = 0;
+    compareModeButton.tabIndex = -1;
     downloadButton.disabled = false;
     try {
       const result = formatJsonText(input.value, 2, false);
